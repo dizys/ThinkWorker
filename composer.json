@@ -1,0 +1,31 @@
+{
+    "name": "dizy/think",
+    "description": "the new thinkworker framework",
+    "type": "project",
+    "keywords": [
+        "framework",
+        "thinkworker",
+        "ORM"
+    ],
+    "homepage": "http://thinkworker.cn/",
+    "license": "Apache-2.0",
+    "authors": [{
+        "name": "Dizy",
+        "email": "derzart@gmail.com"
+    }],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/database": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "app\\": "app"
+        }
+    },
+    "extra": {
+        "think-path": "thinkcore"
+    },
+    "config": {
+        "preferred-install": "dist"
+    }
+}
