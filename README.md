@@ -1,9 +1,9 @@
 # ThinkWorker
 Run without Apache/Nginx/php-fpm! A PHP Framework based on Workerman to help build your website!
 
-This is inspired by a lot of other excellent frameworks, namely ThinkPHP, Lavarel, Express.Js ... 
+This is inspired by a lot of other excellent frameworks, namely ThinkPHP, Laravel, Express.Js ... 
 
-But what makes this different from ThinkPHP or Lavarel is that: ThinkWorker runs without Apache or Nginx or PHP-fpm. Instead, it runs purely and stably on PHP socket connections, thanks to Workerman, which empower it to preform much better.
+But what makes this different from ThinkPHP or Laravel is that: ThinkWorker runs without Apache or Nginx or PHP-fpm. Instead, it runs purely and stably on PHP socket connections, thanks to Workerman, which empowers it to preform much better.
 
 This project is still in progress moving forward to the very first usable version. Now, everything may be a little bad implemented or seldomly documented. But, I will keep up. :)
 
