@@ -6,6 +6,10 @@
  *  Author: Dizy <derzart@gmail.com>
  */
 
+
+/**
+ *  Database Settings
+ */
 return [
     'driver'    => 'mysql',
     'host'      => 'localhost',

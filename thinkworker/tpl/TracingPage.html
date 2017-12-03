@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>{$title}</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+        html,
+        body {
+            margin: 0;
+            font-family: "Arial", "Microsoft YaHei", "黑体", "宋体", sans-serif;
+            word-wrap: break-word;
+        }
+        
+        .content {
+            width: 80%;
+            margin: 0 auto;
+            display: block;
+            margin-top: 40px;
+        }
+        
+        .content-title {
+            width: 100%;
+            font-size: 2rem;
+            color: #EB9E05;
+            padding-left: 30px;
+        }
+        
+        .content-title-detail {
+            font-size: 2rem;
+            color: #B4BCCC;
+        }
+        
+        .content-divide {
+            width: 100%;
+            margin-top: 20px;
+            border-bottom: 1px solid #EDF2FC;
+        }
+        
+        .content-copyright {
+            width: 100%;
+            text-align: center;
+            font-size: 1rem;
+            color: #D8DCE5;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            font-weight: 100;
+        }
+        
+        .content-msg {
+            margin: 0 auto;
+            background-color: #EDF2FC;
+            font-size: 1.3rem;
+            color: #878D99;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            font-weight: 100;
+            padding: 20px 40px;
+            border-radius: 10px;
+        }
+        
+        .content-msg span {
+            line-height: 2rem;
+        }
+        
+        .content-msg span.content-msg-fileinfo {
+            color: #B4BCCC;
+        }
+        
+        .content-msg span.content-msg-error {}
+        
+        .content-section {
+            margin-bottom: 30px;
+        }
+        
+        .content-section-title {
+            font-size: 1.2rem;
+            padding-left: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .debug-tracing-table {
+            width: 100%;
+            font-size: 1rem;
+            color: #5a5e66;
+            display: table;
+            border-collapse: separate;
+        }
+        
+        .debug-tracing-table td {
+            padding: 13px 10px;
+            padding-right: 20px;
+        }
+        
+        .debug-tracing-table-num {
+            text-align: right;
+            min-width: 40px;
+        }
+        
+        .debug-tracing-table-key {
+            text-align: right;
+        }
+        
+        .debug-tracing-table-line {
+            min-width: 60px;
+        }
+        
+        .debug-tracing-table thead tr {}
+        
+        .debug-tracing-table thead td {
+            font-weight: bold;
+            color: #878d99;
+            border-bottom: 1px solid #e6ebf5;
+            word-wrap: break-word;
+        }
+        
+        .debug-tracing-table tbody tr {
+            transition: 0.3s;
+        }
+        
+        .debug-tracing-table tbody tr:hover {
+            background-color: #f5f7fa;
+            transition: 0.3s;
+        }
+        
+        .debug-tracing-table tbody td {
+            border-bottom: 1px solid #e6ebf5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <div class="content-title">
+            {$main_msg}: <span class="content-title-detail">{$main_msg_detail}</span>
+        </div>
+        <div class="content-divide"></div>
+        <div class="content-msg">
+            <span class="content-msg-fileinfo">{$main_error_pos}</span>
+            <br>
+            <span class="content-msg-error">{$main_error_detail}</span>
+        </div>
+        <div class="content-section">
+            <div class="content-section-title">{$lang_tracing}</div>
+            <div class="content-section-body">
+                <table cellspacing="0" cellpadding="0" border="0" class="debug-tracing-table">
+                    <thead>
+                        <tr>
+                            <td class="debug-tracing-table-num" width="10%">#</td>
+                            <td class="debug-tracing-table-filepath" width="30%">{$lang_src}</td>
+                            <td class="debug-tracing-table-line" width="10%">{$lang_line}</td>
+                            <td class="debug-tracing-table-call" width="50%">{$lang_call}</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {$tracing_table}
+                        <!---->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="content-section">
+            <div class="content-section-title">{$lang_request}</div>
+            <div class="content-section-body">
+                <table cellspacing="0" cellpadding="0" border="0" class="debug-tracing-table">
+                    <thead>
+                        <tr>
+                            <td class="debug-tracing-table-key" width="20%">{$lang_key}</td>
+                            <td class="debug-tracing-table-value">{$lang_value}</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {$request_table}
+                        <!---->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="content-section">
+            <div class="content-section-title">{$lang_env}</div>
+            <div class="content-section-body">
+                <table cellspacing="0" cellpadding="0" border="0" class="debug-tracing-table">
+                    <thead>
+                        <tr>
+                            <td class="debug-tracing-table-key" width="20%">{$lang_key}</td>
+                            <td class="debug-tracing-table-value">{$lang_value}</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {$env_table}
+                        <!---->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="content-copyright">
+            ThinkWorker©2017 All Rights Reserved.
+        </div>
+    </div>
+</body>
+
+</html>

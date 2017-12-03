@@ -27,9 +27,10 @@ return [
      */
     'think' => [
         'debug' => true,
+        'tracing_max_lines' => 7,
         'default_return_type' => 'html',
         'routing_cache_default' => true,
-        'default_filter' => 'stripslashes, htmlspecialchars',
+        'default_filter' => '',
 
         'app_namespace' => 'app',
         'deny_app_list' => ['common'],
@@ -37,6 +38,7 @@ return [
         'default_controller' => 'Index',
         'default_action' => 'index',
         'default_lang' => 'zh-cn',
+        'auto_lang' => true,
         'var_lang' => '_lang',
     ],
 
@@ -50,6 +52,9 @@ return [
         'cache_lifetime' => 0,
         'debugging' => true,
         'debugging_ctrl' => 'URL',
+        'view_replace_str'  =>  [
+            '__PUBLIC__' => '/',
+        ]
     ],
 
     /**

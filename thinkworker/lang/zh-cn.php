@@ -1,0 +1,61 @@
+<?php
+/**
+ *  ThinkWorker - THINK AND WORK FAST
+ *  Copyright (c) 2017 http://thinkworker.cn All Rights Reserved.
+ *  Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+ *  Author: Dizy <derzart@gmail.com>
+ */
+
+return [
+    'vhost not found title' => '网站貌似还没有开通',
+    'vhost not found msg' => '抱歉，没有找到域名对应空间。网站还没有开通！',
+    'page not found title' => '页面找不到啦~',
+    'page not found msg' => '对不起，您要的页面找不到了尼！',
+    'page error title' => '页面出错啦~',
+    'page error msg' => '对不起欸，页面好像出错啦！',
+    'tracing page tracing' => '调试跟踪',
+    'tracing page src file' => '源码',
+    'tracing page line' => '行',
+    'tracing page line num' => '行号',
+    'tracing page call' => '调用',
+    'tracing page request detail' => '请求信息',
+    'tracing page request domain' => '请求域名',
+    'tracing page request from' => '请求来自',
+    'tracing page request method' => '请求方法',
+    'tracing page request fulluri' => '请求完整URI',
+    'tracing page request route uri' => '路由URI',
+    'tracing page request route payload' => '路由Payload',
+    'tracing page request get content' => 'GET提交内容',
+    'tracing page request post content' => 'POST提交内容',
+    'tracing page request raw post content' => 'RAW_POST提交内容',
+    'tracing page request file post num' => '文件上传',
+    'tracing page request file post num unit' => '个',
+    'tracing page env system' => '操作系统',
+    'tracing page env php version' => 'PHP版本',
+    'tracing page env workerman version' => 'Workerman版本',
+    'tracing page env thinkworker version' => 'ThinkWorker版本',
+    'tracing page env supported' => '支持',
+    'tracing page env not supported' => '不支持',
+    'tracing page env pcntl supported' => 'pcntl扩展',
+    'tracing page env posix supported' => 'posix扩展',
+    'tracing page env pdo supported' => 'PDO扩展',
+    'tracing page env inotify supported' => 'inotify扩展',
+    'tracing page env installed extensions' => '已安装扩展',
+    'tracing page key' => '键名',
+    'tracing page value' => '值',
+    'tracing page null' => '无',
+    'tracing page env' => '环境信息',
+    'tracing page controller process error' => '控制器过程错误',
+    'tracing page controller not found' => '找不到控制器',
+    'tracing page controller not found error detail' => '路由已经成功匹配，但找不到设定的对应控制器 {$controller}, 请检查路由规则配置',
+    'tracing page closure process error' => '闭包过程错误',
+    'tracing page method not found' => '找不到控制器下的方法',
+    'tracing page method not found error detail' => '找不到控制器 {$controller} 下的 {$method} 方法, 请检查路由规则配置',
+    'tracing page route not found' => '没有路由匹配结果',
+    'tracing page route not found error detail' => '不能在路由规则中找到该URI对应的配置，请检查路由规则配置',
+    'tracing page unknown error' => '未知异常',
+    'tracing page syntax parse error' => '语法解析出错',
+    'tracing page syntax parse error detail' => '解析脚本时出现语法错误',
+    'tracing page db error' => '数据库错误',
+    'tracing page template smarty error' => 'Smarty模板引擎错误'
+];

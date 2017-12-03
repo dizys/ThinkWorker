@@ -6,9 +6,9 @@
  *  Author: Dizy <derzart@gmail.com>
  */
 
+/**
+ *  VHost Settings
+ */
 return [
-    '*.vtim.com,vtim.com' => 'vtim',
-    '*.fuck.me,fuck.me' => [
-        '/' => 'demo/index/hatest'
-    ]
+    'localhost' => 'localhost'
 ];

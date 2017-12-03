@@ -1,5 +1,5 @@
 {
-    "name": "dizy/think",
+    "name": "dizy/thinkworker",
     "description": "the new thinkworker framework",
     "type": "project",
     "keywords": [
@@ -23,7 +23,7 @@
         }
     },
     "extra": {
-        "think-path": "thinkcore"
+        "think-path": "thinkworker"
     },
     "config": {
         "preferred-install": "dist"

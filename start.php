@@ -10,4 +10,4 @@
 namespace think;
 
 define('APP_PATH', __DIR__ . '/app/'); //Define the application directory
-require __DIR__ . '/thinkcore/start.php'; //Require the bootstrap file
+require __DIR__ . '/thinkworker/start.php'; //Require the bootstrap file
