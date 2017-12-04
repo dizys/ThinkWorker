@@ -231,7 +231,7 @@ class Http
         }
 
         // header
-        $header .= "Server: workerman/" . Worker::VERSION . "\r\nContent-Length: " . strlen($content) . "\r\n\r\n";
+        $header .= "Content-Length: " . strlen($content) . "\r\n\r\n";
 
         // save session
         self::sessionWriteClose();

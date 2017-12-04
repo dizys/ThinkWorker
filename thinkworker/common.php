@@ -196,3 +196,61 @@ if(!function_exists("think_core_charset_auto_revert")) {
         return $msg;
     }
 }
+
+if(!function_exists("think_core_strrposBack")){
+    function think_core_strrposBack($string, $needle, $offset = 0){
+        $find = strrpos($string, $needle, $offset);
+        if($find === false){
+            return false;
+        }
+        return strlen($string) - $find - strlen($needle);
+    }
+}
+
+if(!function_exists("think_core_xml_encode")) {
+    function think_core_xml_encode($data, $root, $item, $attr, $id, $encoding)
+    {
+        if (is_array($attr)) {
+            $array = [];
+            foreach ($attr as $key => $value) {
+                $array[] = "{$key}=\"{$value}\"";
+            }
+            $attr = implode(' ', $array);
+        }
+        $attr = trim($attr);
+        $attr = empty($attr) ? '' : " {$attr}";
+        $xml = "<?xml version=\"1.0\" encoding=\"{$encoding}\"?>";
+        $xml .= "<{$root}{$attr}>";
+        $xml .= think_core_data_to_xml($data, $item, $id);
+        $xml .= "</{$root}>";
+        return $xml;
+    }
+}
+
+if(!function_exists("think_core_data_to_xml")) {
+    function think_core_data_to_xml($data, $item, $id)
+    {
+        $xml = $attr = '';
+        foreach ($data as $key => $val) {
+            if (is_numeric($key)) {
+                $id && $attr = " {$id}=\"{$key}\"";
+                $key = $item;
+            }
+            $xml .= "<{$key}{$attr}>";
+            $xml .= (is_array($val) || is_object($val)) ? think_core_data_to_xml($val, $item, $id) : $val;
+            $xml .= "</{$key}>";
+        }
+        return $xml;
+    }
+}
+
+if(!function_exists("think_core_jsonp_callback_name_check")) {
+    function think_core_jsonp_callback_name_check($name)
+    {
+        $pattern = "/^[\.\\\$_0-9a-zA-Z]+$/";
+        if (preg_match($pattern, $name)) {
+            return true;
+        }
+        return false;
+    }
+}

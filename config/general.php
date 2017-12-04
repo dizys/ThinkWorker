@@ -40,6 +40,14 @@ return [
         'default_lang' => 'zh-cn',
         'auto_lang' => true,
         'var_lang' => '_lang',
+
+        'default_return_array_encoder'    => 'xml',
+        'jsonp_handler_setting_var'      => 'callback',
+        'default_jsonp_handler'  => 'jsonpReturn',
+        'xml_root_node' => 'think',
+        'xml_root_attr' => '',
+        'xml_item_node' => 'item',
+        'xml_item_key'  => 'id',
     ],
 
     /**

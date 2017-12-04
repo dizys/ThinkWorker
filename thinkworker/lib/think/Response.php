@@ -58,8 +58,8 @@ class Response
         return true;
     }
 
-    public function setContentType($type, $charset = "utf8"){
-        return Http::header("Content-type:".$type."; charset=".$charset);
+    public function setContentType($type, $charset = "utf-8"){
+        return Http::header("Content-Type: ".$type.";charset=".$charset);
     }
 
     public function setCookie($name, $value){
@@ -73,14 +73,26 @@ class Response
     }
 
     public function json($data){
-        $this->setContentType("text/json");
+        $this->setContentType("application/json");
         $data = json($data);
+        $this->send($data);
+    }
+
+    public function jsonp($data, $callback = null){
+        $this->setContentType("application/javascript");
+        $data = jsonp($data, $callback);
+        $this->send($data);
+    }
+
+    public function xml($data){
+        $this->setContentType("text/xml");
+        $data = xml($data);
         $this->send($data);
     }
 
     public function redirect($url, $statusCode = 302){
         $this->setHeader("HTTP", true, $statusCode);
-        $this->setHeader("Location:".$url);
+        $this->setHeader("Location: ".$url);
         $this->send();
     }
 

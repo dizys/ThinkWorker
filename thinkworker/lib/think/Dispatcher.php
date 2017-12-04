@@ -37,7 +37,18 @@ class Dispatcher
             }
         }
         if(is_array($controllerRet) || is_object($controllerRet)){
-            $resp->json($controllerRet);
+            $encoder = config("think.default_return_array_encoder")?:"json";
+            switch ($encoder){
+                case "json":
+                    $resp->json($controllerRet);
+                    break;
+                case "jsonp":
+                    $resp->jsonp($controllerRet);
+                    break;
+                case "xml";
+                    $resp->xml($controllerRet);
+                    break;
+            }
         }else{
             $resp->send($controllerRet);
         }
@@ -78,7 +89,10 @@ class Dispatcher
             $TW_ENV_LANG = $req->getLang();
             $controller = new $classFullName($req, $resp);
         }catch (\Error $e){
-            $phpFile = Loader::classToAppFilePath($classFullName);
+            $phpFile = Loader::classToAppFilePathPsr0($classFullName);
+            if(!is_file($phpFile)){
+                $phpFile = Loader::classToAppFilePath($classFullName);
+            }
             if(is_file($phpFile)){
                 $errorMsg = "";
                 $result = Debug::checkPHPSyntax($phpFile, $errorMsg);
