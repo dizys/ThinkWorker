@@ -7,5 +7,5 @@
  */
 
 return [
-    '/' => 'index/Index/index'
+    '/' => 'index/Index/index',
 ];

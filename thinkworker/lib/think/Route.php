@@ -10,12 +10,16 @@ namespace think;
 
 use think\exception\RouteNotFoundException;
 use think\exception\VHostNotFoundException;
+use think\route\SubRoute;
 
 class Route
 {
     protected static $mapRules = [];
     protected static $mapCache = [];
+    protected static $mapCacheSize = 1000;
     public static function _init($rules){
+        self::$mapCacheSize = Config::get("think.routing_cache_size");
+        self::$mapCacheSize = is_null(self::$mapCacheSize)?1000:self::$mapCacheSize;
         foreach ($rules as $host=>$rule){
             $names = explode(",",$host);
             $i = 0;$len = sizeof($names);
@@ -33,6 +37,110 @@ class Route
             }
             self::$mapRules[$newNames] = $rule;
         }
+    }
+
+    public static function clearCache($hostname = null){
+        if(is_null($hostname)){
+            self::$mapCache = [];
+        }else if(isset(self::$mapCache[$hostname])){
+            self::$mapCache[$hostname] = [];
+        }
+    }
+
+    public static function add($hostname, $pattern, $rule = null){
+        if(is_null($rule) && is_array($pattern)){
+            foreach ($pattern as $key => $value){
+                self::addOne($hostname, $key, $value);
+            }
+        }else if(is_array($pattern)){
+            foreach ($pattern as $key){
+                self::addOne($hostname, $key, $rule);
+            }
+        }else if(!is_null($rule) && is_string($pattern)){
+            self::addOne($hostname, $pattern, $rule);
+        }
+        self::clearCache($hostname);
+    }
+
+    private static function addOne($hostname, $pattern, $rule){
+        if(strpos($pattern, "@")===0 && is_array($rule) && count($rule) == 5){
+            $rule = [$rule[0], $rule[1], $rule[4]];
+        }
+        $hostname = self::matchToVHost($hostname);
+        if(!isset(self::$mapRules[$hostname])){
+            self::$mapRules[$hostname] = [];
+        }
+        self::$mapRules[$hostname][$pattern] = $rule;
+    }
+
+    public static function any($hostname, $pattern, $handler, $payloadCheck = null, $suffix = null, $cache = null){
+        self::add($hostname, $pattern, [$handler, null, $payloadCheck, $suffix, $cache]);
+    }
+
+    public static function get($hostname, $pattern, $handler, $payloadCheck = null, $suffix = null, $cache = null){
+        self::add($hostname, $pattern, [$handler, 'GET', $payloadCheck, $suffix, $cache]);
+    }
+
+    public static function post($hostname, $pattern, $handler, $payloadCheck = null, $suffix = null, $cache = null){
+        self::add($hostname, $pattern, [$handler, 'POST', $payloadCheck, $suffix, $cache]);
+    }
+
+    public static function put($hostname, $pattern, $handler, $payloadCheck = null, $suffix = null, $cache = null){
+        self::add($hostname, $pattern, [$handler, 'PUT', $payloadCheck, $suffix, $cache]);
+    }
+
+    public static function delete($hostname, $pattern, $handler, $payloadCheck = null, $suffix = null, $cache = null){
+        self::add($hostname, $pattern, [$handler, 'DELETE', $payloadCheck, $suffix, $cache]);
+    }
+
+    public static function group($hostname, $prefix, $rules, $configs = []){
+        $hostname = self::matchToVHost($hostname);
+        if(!isset(self::$mapRules[$hostname])){
+            self::$mapRules[$hostname] = [];
+        }
+        $realPrefix = $prefix;
+        $realRules = $rules;
+        $realConfigs = $configs;
+        if(is_array($prefix)){
+            $realConfigs = $prefix;
+            $realPrefix = null;
+        }
+        $method = null;
+        $suffix = null;
+        $cache = null;
+        foreach ($realConfigs as $key => $value){
+            switch ($key){
+                case 0:
+                case "method":
+                    $method = $value;
+                    break;
+                case 1:
+                case "suffix":
+                case "ext":
+                    $suffix = $value;
+                    break;
+                case 2:
+                case "cache":
+                    $cache = $value;
+                    break;
+            }
+        }
+        if($realRules instanceof \Closure){
+            $subRoute = new SubRoute($method, $suffix, $cache);
+            $realRules($subRoute);
+            $realRules = $subRoute->getRules();
+        }else if(!is_array($realRules)){
+            $realRules = [];
+        }
+        if(empty($realPrefix)){
+            self::$mapRules[$hostname] = array_merge_recursive(self::$mapRules[$hostname], $realRules);
+        }else{
+            if(!isset(self::$mapRules[$hostname]['['.$realPrefix.']'])){
+                self::$mapRules[$hostname]['['.$realPrefix.']'] = [];
+            }
+            self::$mapRules[$hostname]['['.$realPrefix.']']=array_merge_recursive(self::$mapRules[$hostname]['['.$realPrefix.']'], $realRules);
+        }
+        self::clearCache($hostname);
     }
 
     public static function match($req){
@@ -53,67 +161,36 @@ class Route
         }
         $controller = is_array($pathResult)?$pathResult[0]:$pathResult;
         if($cache!=false){
+            self::maintainCacheSize($req->hostname);
             self::$mapCache[$req->hostname][$req->uri][$req->method] = ['controller' => $controller, 'payload' => $payload];
         }
         return ['controller' => $controller, 'payload' => $payload];
     }
 
-    public static function clearCache(){
-        self::$mapCache = [];
-    }
-
-    public static function add($hostname, $pattern, $rule = null){
-        if(is_null($rule) && is_array($pattern)){
-            foreach ($pattern as $key => $value){
-                self::addOne($hostname, $key, $value);
+    private static function maintainCacheSize($hostname){
+        if(self::$mapCacheSize != false){
+            if(isset(self::$mapCache[$hostname]) && sizeof(self::$mapCache[$hostname]) > self::$mapCacheSize){
+                foreach (self::$mapCache[$hostname] as $key=>$value){
+                    unset(self::$mapCache[$hostname][$key]);
+                    break;
+                }
             }
-        }else if(is_array($pattern)){
-            foreach ($pattern as $key){
-                self::addOne($hostname, $key, $rule);
-            }
-        }else if(!is_null($rule) && is_string($pattern)){
-            self::addOne($hostname, $pattern, $rule);
         }
-        self::clearCache();
     }
 
-    private static function addOne($hostname, $pattern, $rule){
-        $isHostnameMatched = false;
+
+    private static function matchToVHost($hostname){
         foreach (self::$mapRules as $host=>$value){
             $names = explode(",", $host);
             foreach ($names as $name){
                 if(wildcardMatch($name,$hostname)){
-                    $isHostnameMatched = $host;
-                    goto checkout;
+                    $hostname = $host;
+                    goto matchedJump;
                 }
             }
         }
-        checkout:
-        if($isHostnameMatched === false){
-            self::$mapRules[$hostname][$pattern] = $rule;
-        }else{
-            self::$mapRules[$isHostnameMatched][$pattern] = $rule;
-        }
-    }
-
-    public static function all($hostname, $pattern, $handler, $payloadCheck = null, $cache = true){
-        self::add($hostname, $pattern, [$handler, null, $payloadCheck, $cache]);
-    }
-
-    public static function get($hostname, $pattern, $handler, $payloadCheck = null, $cache = true){
-        self::add($hostname, $pattern, [$handler, 'GET', $payloadCheck, $cache]);
-    }
-
-    public static function post($hostname, $pattern, $handler, $payloadCheck = null, $cache = true){
-        self::add($hostname, $pattern, [$handler, 'POST', $payloadCheck, $cache]);
-    }
-
-    public static function put($hostname, $pattern, $handler, $payloadCheck = null, $cache = true){
-        self::add($hostname, $pattern, [$handler, 'PUT', $payloadCheck, $cache]);
-    }
-
-    public static function delete($hostname, $pattern, $handler, $payloadCheck = null, $cache = true){
-        self::add($hostname, $pattern, [$handler, 'DELETE', $payloadCheck, $cache]);
+        matchedJump:
+        return $hostname;
     }
 
     private static function matchVHost($hostname){
@@ -128,16 +205,32 @@ class Route
         return false;
     }
 
-    private static function matchPath($rules, $req, &$payload, &$cache){
-        $uri = $req->uri;
+    private static function matchPath($rules, $req, &$payload, &$cache, $prefix = null, $uri = null){
+        if(is_null($uri)){
+            $uri = $req->uri;
+        }
+        if(!empty($prefix)){
+            if(strpos($uri, "/".$prefix) === 0){
+                $uri = substr($uri, strlen("/".$prefix));
+            }else{
+                return false;
+            }
+        }
         foreach ($rules as $pattern=>$rule){
             if(strpos($pattern, "@")===0){
                 $preg = substr($pattern, 1);
                 if(preg_match($preg, $uri)){
                     $isMatched = true;
+                    if(is_array($rule) && count($rule) == 5){
+                        $rule = [$rule[0], $rule[1], $rule[4]];
+                    }
                     if(is_array($rule) && sizeof($rule)>= 2 && !is_null($rule[1]) && !empty($rule[1])){ //2nd Parameter for methods
                         $isMethodMatched = false;
-                        $methods = explode(",", $rule[1]);
+                        if(is_array($rule[1])){
+                            $methods = $rule[1];
+                        }else{
+                            $methods = explode(",", $rule[1]);
+                        }
                         foreach ($methods as $method){
                             $method = strtoupper(trim($method));
                             if($method == $req->method){
@@ -153,20 +246,48 @@ class Route
                             $cache =  ($rule[2]!=false);
                         }
                         return $rule;
-                        break;
                     }
                 }
             }else{
+                /* Group Routing Recursion */
+                if(strpos($pattern, "[")===0 && is_array($rule)){
+                    $lastPos = strrpos($pattern, "]");
+                    if(!($lastPos === false)){
+                        $prefix = substr($pattern, 1, $lastPos-1);
+                        //var_dump($rule,$prefix, $uri);
+                        $return = self::matchPath($rule,$req, $payload, $cache, $prefix, $uri);
+                        if(!($return === false)){
+                            return $return;
+                        }
+                    }
+                }
                 $isMatched = false;
                 $suffix = config("think.default_return_type");
                 $suffix = is_null($suffix)?"html":$suffix;
-                if(is_array($rule) && sizeof($rule)>=4 && !is_null($rule[3]) && !empty($rule[3])){ //4th Parameter for suffix
+                if(is_array($rule) && sizeof($rule)>=4 && !empty($rule[3]) && !is_null($rule[3]) && !empty($rule[3])){ //4th Parameter for suffix
                     $suffix = trim($rule[3]);
                 }
-                $map = self::basicPathMatch($pattern, $uri, $isMatched, $suffix);
+                $vars_path_match = false;
+                if(strpos($pattern, "{")!=false && strpos($pattern, "}")!=false){
+                    $mapCheck = [];
+                    $vars_path_match = true;
+                    if(is_array($rule) && sizeof($rule)>=3 && isset($rule[2]) && is_array($rule[2])) { //3rd Parameter for payload match
+                        $mapCheck = $rule[2];
+                    }
+                    $map = think_core_route_vars_path_match($pattern, $uri, $isMatched, $suffix, $mapCheck);
+                }else{
+                    $map = think_core_route_basic_path_match($pattern, $uri, $isMatched, $suffix);
+                }
+                if(!$isMatched){
+                    continue;
+                }
                 if(is_array($rule) && sizeof($rule)>= 2 && !is_null($rule[1]) && !empty($rule[1])){ //2nd Parameter for methods
                     $isMethodMatched = false;
-                    $methods = explode(",", $rule[1]);
+                    if(is_array($rule[1])){
+                        $methods = $rule[1];
+                    }else{
+                        $methods = explode(",", $rule[1]);
+                    }
                     foreach ($methods as $method){
                         $method = strtoupper(trim($method));
                         if($method == $req->method){
@@ -177,10 +298,10 @@ class Route
                         $isMatched = false;
                     }
                 }
-                if(is_array($rule) && sizeof($rule)>=3 && is_array($rule[2])){ //3rd Parameter for payload match
+                if($vars_path_match === false && is_array($rule) && sizeof($rule)>=3 && is_array($rule[2])){ //3rd Parameter for payload match
                     foreach ($rule[2] as $key=>$value){
                         if(isset($map[$key])){
-                            if(!preg_match($value, $map[$key])){
+                            if(!preg_match($value, "/^".$map[$key]."$/")){
                                 $isMatched = false;
                                 break;
                             }
@@ -201,61 +322,5 @@ class Route
             return $rules["__MISS__"];
         }
         return false;
-    }
-
-    private static function basicPathMatch($pattern, $uri, &$isMatched, $suffix = "html"){
-        $pattern = rtrim($pattern, "/")."/";
-        if(substr($uri, -strlen(".".$suffix)) == ".".$suffix){
-            if(substr($uri, -strlen(".".$suffix) -1, 1) != "/"){
-                $uri = rtrim($uri, ".".$suffix);
-            }
-        }
-        $uri = rtrim(merge_slashes($uri), "/")."/";
-        $patternLen = strlen($pattern);
-        $uriLen = strlen($uri);
-        $j = 0; $modeBit = 0; $keyBuffer = ''; $valueBuffer = ''; $map = [];
-        for($i=0; $i<$patternLen; $i++){
-            if($j>=$uriLen){
-                if($i!=$patternLen-1){
-                    $modeBit = -1;
-                }else{
-                    $modeBit = 0;
-                }
-                break;
-            }
-            if($modeBit == 0){
-                if($pattern[$i]===$uri[$j]){
-                    $modeBit = 0;
-                    $j++;
-                }else if($i-1 >= 0 && $pattern[$i] == ':' && $pattern[$i-1] == '/'){
-                    $modeBit = 1;
-                    $keyBuffer = '';
-                    $valueBuffer = '';
-                    while ($uri[$j]!='/' && $j<$uriLen){
-                        $valueBuffer.=$uri[$j];
-                        $j++;
-                    }
-                }else{
-                    $modeBit = -1;
-                    break;
-                }
-            }else if($modeBit == 1) {
-                if($pattern[$i]!='/' && $i<$patternLen){
-                    $keyBuffer.=$pattern[$i];
-                }
-                if($pattern[$i]=='/' || $i == $patternLen - 1){
-                    $map[$keyBuffer] = $valueBuffer;
-                    $modeBit = 0;
-                    $keyBuffer = '';
-                    $valueBuffer = '';
-                    $j++;
-                }
-            }
-        }
-        if($j<$uriLen){
-            $modeBit = -1;
-        }
-        $isMatched = ($modeBit === 0);
-        return $map;
     }
 }

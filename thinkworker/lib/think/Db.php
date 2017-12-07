@@ -85,6 +85,30 @@ class Db
         return $TW_ENV_CAPSULE->getSchemaBuilder();
     }
 
+    /**
+     * Get a connection instance from the global manager.
+     *
+     * @param  string  $connection
+     * @return \Illuminate\Database\Connection
+     */
+    public static function connection($connection = null)
+    {
+        global $TW_ENV_CAPSULE;
+        return $TW_ENV_CAPSULE->getConnection($connection);
+    }
+
+    /**
+    * Register a connection with the manager.
+    *
+    * @param  array   $config
+    * @param  string  $name
+    * @return void
+    */
+    public static function addConnection(array $config, $name = 'default')
+    {
+        global $TW_ENV_CAPSULE;
+        $TW_ENV_CAPSULE->addConnection($config, $name);
+    }
 
     /**
      * Begin a fluent query against a database table.
@@ -650,4 +674,71 @@ class Db
         return $TW_ENV_CAPSULE->getResolver($driver);
     }
 
+
+    /**
+     * Execute a Closure within a transaction.
+     *
+     * @param  \Closure  $callback
+     * @param  int  $attempts
+     * @return mixed
+     *
+     * @throws \Throwable
+     */
+    public static function transaction(Closure $callback, $attempts = 1){
+        global $TW_ENV_CAPSULE;
+        return $TW_ENV_CAPSULE->transaction($callback, $attempts);
+    }
+
+    /**
+     * Start a new database transaction.
+     *
+     * @return void
+     */
+    public static function beginTransaction(){
+        global $TW_ENV_CAPSULE;
+        $TW_ENV_CAPSULE->beginTransaction();
+    }
+
+    /**
+     * Commit the active database transaction.
+     *
+     * @return void
+     */
+    public static function commit(){
+        global $TW_ENV_CAPSULE;
+        $TW_ENV_CAPSULE->commit();
+    }
+
+    /**
+     * Rollback the active database transaction.
+     *
+     * @return void
+     */
+    public static function rollBack(){
+        global $TW_ENV_CAPSULE;
+        $TW_ENV_CAPSULE->rollBack();
+    }
+
+    /**
+     * Get the number of active transactions.
+     *
+     * @return int
+     */
+    public static function transactionLevel(){
+        global $TW_ENV_CAPSULE;
+        return $TW_ENV_CAPSULE->transactionLevel();
+    }
+
+    /**
+     * Dynamically pass methods to the default connection.
+     *
+     * @param  string  $method
+     * @param  array   $parameters
+     * @return mixed
+     */
+    public static function __callStatic($method, $parameters)
+    {
+        global $TW_ENV_CAPSULE;
+        return $TW_ENV_CAPSULE->$method(...$parameters);
+    }
 }

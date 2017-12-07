@@ -30,6 +30,7 @@ return [
         'tracing_max_lines' => 7,
         'default_return_type' => 'html',
         'routing_cache_default' => true,
+        'routing_cache_size' => 1000,
         'default_filter' => '',
 
         'app_namespace' => 'app',

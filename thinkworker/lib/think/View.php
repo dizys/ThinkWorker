@@ -13,10 +13,10 @@ class View
 {
     protected $template;
     protected $filePath, $fileExt, $appName;
-    public function __construct($appName, $viewfile = null)
+    public function __construct($appName, $viewfile = null, $values = null)
     {
         $this->enginePrepare();
-        if(is_null($viewfile)){
+        if(is_null($viewfile) || is_array($viewfile)){
             if(!strpos($appName, "@")){
                 $viewfile = rtrim($appName, ".".$this->fileExt).".".$this->fileExt;
                 $viewfile = fix_slashes_in_path($viewfile);
@@ -48,6 +48,11 @@ class View
         }else{
             $this->filepathPrepare($appName, $viewfile);
             $this->appName = $appName;
+        }
+        if(is_array($viewfile)){
+            $this->assign($viewfile);
+        }else if (is_array($values)){
+            $this->assign($values);
         }
     }
 

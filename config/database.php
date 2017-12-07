@@ -12,7 +12,7 @@
  */
 return [
     'driver'    => 'mysql',
-    'host'      => 'localhost',
+    'host' => 'localhost',
     'database'  => 'mvctest',
     'username'  => 'root',
     'password'  => 'root',
