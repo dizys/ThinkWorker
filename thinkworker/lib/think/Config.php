@@ -70,7 +70,4 @@ class Config
         }
     }
 
-    public static function test(){
-        var_dump(self::$config);
-    }
 }

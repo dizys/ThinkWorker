@@ -17,6 +17,4 @@ Simply Run The Command: `php start.php start`
 Then open your browser, visit localhost!
 
 ## To Do
-- Exception Tracing Webpage Templates
-- Smarty file resource dirpath setting
-- so much more
+- Maybe Validator? I guess?

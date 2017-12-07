@@ -13,6 +13,7 @@ abstract class Controller
 {
     protected $req, $resp;
     protected $view = null;
+    protected $beforeActionList = [];
 
     public function __construct(Request $req, Response $resp)
     {
@@ -22,11 +23,36 @@ abstract class Controller
             $appName = $req->controllerInfo->appNameSpace;
             $controllerName = $req->controllerInfo->controllerNameSpace;
             $methodName = $req->controllerInfo->methodName;
-            $this->view = new View($appName, $controllerName."/".$methodName);
+            try{
+                $this->view = new View($appName, $controllerName."/".$methodName);
+            }catch (\Exception $ignored){}
         }
     }
 
     public function _init(){}
+
+    public function _beforeAction($method){
+        foreach ($this->beforeActionList as $key => $value){
+            if(is_numeric($key)){
+                $this->$value($this->req, $this->resp);
+            }else{
+                $go = true;
+                if(isset($value["except"]) && think_core_in_array_or_string($method, $value["except"])){
+                    $go = false;
+                }
+                if(isset($value["only"])){
+                    $go = false;
+                    if(think_core_in_array_or_string($method, $value["only"])){
+                        $go = true;
+                    }
+                }
+                if($go){
+                    $this->$key($this->req, $this->resp);
+                }
+            }
+        }
+    }
+
 
     public function assign($name, $value = null){
         if($this->view){

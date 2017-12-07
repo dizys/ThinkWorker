@@ -109,6 +109,9 @@ class Dispatcher
             if(is_callable(array($controller, "_init"))){
                 $controller->_init();
             }
+            if(is_callable(array($controller, "_beforeAction"))){
+                $controller->_beforeAction($methodName);
+            }
             $controllerRet = $controller->$methodName($req, $resp);
             return $controllerRet;
         }catch (\Error $e){

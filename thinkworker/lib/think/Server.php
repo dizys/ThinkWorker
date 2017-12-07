@@ -104,7 +104,6 @@ class Server
             //Caught FatalException then log error and shut down server
             $eDesc = describeException($e);
             Log::e($eDesc, "FatalException");
-            exit($eDesc);
         }catch (\Exception $e){
             //Unknown Exception
             $ne = new UnknownException($e);

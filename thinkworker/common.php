@@ -365,3 +365,20 @@ if(!function_exists("think_core_route_vars_path_match")) {
         }
     }
 }
+
+if(!function_exists("think_core_in_array_or_string")) {
+    function think_core_in_array_or_string($string, $collection){
+        if(is_string($collection)){
+            $collection = explode(",", $collection);
+        }
+        $has = false;
+        foreach ($collection as $item){
+            $item = trim($item);
+            if($item == $string){
+                $has = true;
+                break;
+            }
+        }
+        return $has;
+    }
+}

@@ -110,10 +110,12 @@ class Request
     }
 
     public function payload($data=null){
-        if(is_null($data)){
-            return (object)$this->payload;
-        }else{
+        if(is_array($data)){
             $this->payload = $data;
+        }else if(is_null($data)){
+            return (object)$this->payload;
+        }else if(is_string($data)){
+            return isset($this->payload[$data])?$this->payload[$data]:null;
         }
     }
 

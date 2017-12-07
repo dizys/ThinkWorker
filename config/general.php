@@ -42,7 +42,7 @@ return [
         'auto_lang' => true,
         'var_lang' => '_lang',
 
-        'default_return_array_encoder'    => 'xml',
+        'default_return_array_encoder'    => 'json',
         'jsonp_handler_setting_var'      => 'callback',
         'default_jsonp_handler'  => 'jsonpReturn',
         'xml_root_node' => 'think',

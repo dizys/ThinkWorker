@@ -62,8 +62,23 @@ class Response
         return Http::header("Content-Type: ".$type.";charset=".$charset);
     }
 
-    public function setCookie($name, $value){
-        return Http::setcookie($this->cookiePrefix.$name, $value, config("cookie.expire"), config("cookie.path"), config("cookie.domain"), config("cookie.secure"), config("cookie.httponly"));
+    public function setCookie($name, $value, $expire = null, $path = null, $domain = null, $secure = null, $httponly = null){
+        if(is_null($expire)){
+            $expire = config("cookie.expire");
+        }
+        if(is_null($path)){
+            $path = config("cookie.path");
+        }
+        if(is_null($domain)){
+            $domain = config("cookie.domain");
+        }
+        if(is_null($secure)){
+            $secure = config("cookie.secure");
+        }
+        if(is_null($httponly)){
+            $httponly = config("cookie.httponly");
+        }
+        return Http::setcookie($this->cookiePrefix.$name, $value, $expire, $path, $domain, $secure, $httponly);
     }
 
     public function send($body = ""){
