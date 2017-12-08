@@ -80,6 +80,10 @@ class View
         $this->template->replace($name, $value);
     }
 
+    public function outReplace($name, $value = null){
+        $this->template->outReplace($name, $value);
+    }
+
     public function assign($name, $value = null){
         $this->template->assign($name, $value);
     }
@@ -90,6 +94,10 @@ class View
 
     public function clearAllAssign(){
         $this->template->clearAllAssign();
+    }
+
+    public function registerFunction($functionName, $asName = null){
+        $this->template->registerFunction($functionName, $asName);
     }
 
     public function fetch($template = null){

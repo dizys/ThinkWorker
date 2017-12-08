@@ -30,7 +30,7 @@ class SyntaxParseException extends HttpException
             'title' => think_core_lang("tracing page syntax parse error"),
             'main_msg' => think_core_lang("tracing page syntax parse error"),
             'main_msg_detail' => think_core_shorten_filepath($this->filepath),
-            'main_error_pos' => $this->filepath.":",
+            'main_error_pos' => fix_slashes_in_path($this->filepath).":",
             'main_error_detail' => think_core_lang("tracing page syntax parse error detail").": <br>".$this->getMessage(),
             'lang_tracing' => think_core_lang("tracing page tracing"),
             'lang_src' => think_core_lang("tracing page src file"),

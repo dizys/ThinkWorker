@@ -15,7 +15,7 @@ class Debug
         $file_content = file_get_contents($filename);
 
         $check_code = "return true; ?>";
-        $file_content = $check_code . $file_content . "<?php ";
+        $file_content = "<?php ".$check_code . $file_content ;
 
         try{
             if(!eval($file_content)) {

@@ -72,6 +72,24 @@ abstract class Controller
         }
     }
 
+    public function replace($name, $value = null){
+        if($this->view) {
+            $this->view->replace($name, $value);
+        }
+    }
+
+    public function outReplace($name, $value = null){
+        if($this->view) {
+            $this->view->outReplace($name, $value);
+        }
+    }
+
+    public function registerFunction($functionName, $asName = null){
+        if($this->view) {
+            $this->view->registerFunction($functionName, $asName);
+        }
+    }
+
     public function fetch($template = null){
         if($this->view){
             return $this->view->fetch($template);

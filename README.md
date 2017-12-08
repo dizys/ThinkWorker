@@ -16,5 +16,7 @@ Model is powered by `Eloquent ORM` (from the famous Laravel)
 Simply Run The Command: `php start.php start`
 Then open your browser, visit localhost!
 
-## To Do
-- Maybe Validator? I guess?
+## Now Progress
+version: 1.0.0 alpha
+
+[中文文档](http://docs.thinkworker.cn/#/zh-cn/guide/essentials/)

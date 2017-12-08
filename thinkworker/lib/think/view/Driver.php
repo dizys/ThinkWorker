@@ -17,6 +17,8 @@ interface Driver
     public function clearAssign($name);
     public function clearAllAssign();
     public function replace($name, $value = null);
+    public function outReplace($name, $value = null);
     public function config($name, $value);
+    public function registerFunction($functionName, $asName = null);
     public function getInstance();
 }

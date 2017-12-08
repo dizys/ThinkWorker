@@ -15,8 +15,12 @@ class Log
 {
     protected static $driver;
     public static function _init($configs){
-        self::$driver = new FileDriver();
+        $driverName = isset($configs['driver'])?$configs['driver']:"file";
+        $driverName[0] = strtoupper($driverName[0]);
+        $engineFullName = "think\\log\\".$driverName."Driver";
+        self::$driver = new $engineFullName();
         self::$driver->init($configs);
+        var_dump($engineFullName);
     }
 
     public static function log($type, $marker, $msg){

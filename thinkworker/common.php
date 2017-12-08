@@ -34,7 +34,7 @@ if(!function_exists("merge_slashes")) {
 if(!function_exists("think_controller_analyze")) {
     function think_controller_analyze($controller)
     {
-        $controllerSep = explode("/", $controller);
+        $controller = rtrim($controller, "/");
         $appNameSpace = config('think.default_app');
         $appNameSpace = is_null($appNameSpace)?"index":$appNameSpace;
         $controllerNameSpace = config('think.default_controller');
@@ -42,6 +42,20 @@ if(!function_exists("think_controller_analyze")) {
         $methodName = config('think.default_method');
         $methodName = is_null($methodName)?"index":$methodName;
 
+        $controllerSep = explode("/", $controller);
+        $sepSize = sizeof($controllerSep);
+        $subController = false;
+        if($sepSize>3){
+            $controllerSepPre = [];
+            $controllerSepPre[0] = $controllerSep[0];
+            $controllerSepPre[1] = "";
+            for ($i=1; $i<$sepSize-1; $i++){
+                $controllerSepPre[1] .= $controllerSep[$i].($i == $sepSize-2?"":"\\");
+            }
+            $controllerSepPre[2] = $controllerSep[$sepSize-1];
+            $controllerSep = $controllerSepPre;
+            $subController = true;
+        }
         if(isset($controllerSep[2])){
             $appNameSpace = $controllerSep[0];
             $controllerNameSpace = $controllerSep[1];
@@ -52,7 +66,12 @@ if(!function_exists("think_controller_analyze")) {
         }else if(isset($controllerSep[0]) && !empty($controllerSep[0])){
             $methodName = $controllerSep[0];
         }
-        $controllerNameSpace[0] = strtoupper($controllerNameSpace[0]);
+        if($subController){
+            $slashPos = strrpos($controllerNameSpace, "\\");
+            $controllerNameSpace[$slashPos+1] = strtoupper($controllerNameSpace[$slashPos+1]);
+        }else{
+            $controllerNameSpace[0] = strtoupper($controllerNameSpace[0]);
+        }
         $appRootNameSpace = config("app_namespace");
         $appRootNameSpace = is_null($appRootNameSpace)?"app":$appRootNameSpace;
         $classFullName = $appRootNameSpace."\\".$appNameSpace."\\controller\\".$controllerNameSpace;

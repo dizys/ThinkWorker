@@ -62,7 +62,11 @@ class Smarty_Internal_Compile_Private_Registered_Function extends Smarty_Interna
         $function = $tag_info[ 0 ];
         // compile code
         if (!is_array($function)) {
-            $output = "{$function}({$_params},\$_smarty_tpl)";
+            if($function instanceof Closure){
+                $output = "\"".$function($_attr)."\"";
+            }else{
+                $output = "{$function}({$_params},\$_smarty_tpl)";
+            }
         } elseif (is_object($function[ 0 ])) {
             $output =
                 "\$_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['{$tag}'][0][0]->{$function[1]}({$_params},\$_smarty_tpl)";

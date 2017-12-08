@@ -60,6 +60,10 @@ return [
         'caching' => true,
         'cache_lifetime' => 0,
         'debugging' => true,
+        'left_delimiter' => '{',
+        'right_delimiter' => '}',
+        'function_cacheable' => true,
+        'allow_php_tag' => true,
         'debugging_ctrl' => 'URL',
         'view_replace_str'  =>  [
             '__PUBLIC__' => '/',
@@ -84,5 +88,13 @@ return [
         'domain' => '',
         'secure' => false,
         'httponly' => ''
+    ],
+
+    /**
+     *  Log Settings
+     */
+    'log' => [
+        'driver' => 'file',
+        'log_path' => LOG_PATH
     ]
 ];

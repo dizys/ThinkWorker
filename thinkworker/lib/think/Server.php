@@ -105,7 +105,7 @@ class Server
             $eDesc = describeException($e);
             Log::e($eDesc, "FatalException");
         }catch (\Exception $e){
-            //Unknown Exception
+            //Unknown but not Fatal Exception
             $ne = new UnknownException($e);
             $resp->setHeader("HTTP", true, $ne->getStatusCode());
             $resp->send($ne->getHttpBody());

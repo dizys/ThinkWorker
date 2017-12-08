@@ -59,7 +59,7 @@ class HttpException extends \Exception
 
     public function formErrorPos(){
         $traceSrc = is_null($this->origin)?$this:$this->origin;
-        return $traceSrc->getFile()." (".$traceSrc->getLine().think_core_lang("tracing page line")."):";
+        return fix_slashes_in_path($traceSrc->getFile())." (".$traceSrc->getLine().think_core_lang("tracing page line")."):";
     }
 
     public function formErrorMsg(){

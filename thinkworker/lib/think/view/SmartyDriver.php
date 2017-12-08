@@ -15,15 +15,20 @@ class SmartyDriver implements Driver
 
     protected $replaceMap = [];
 
+    protected $outReplaceMap = [];
+
+    protected $function_cacheable = true;
+
     public function init($config)
     {
         if(!class_exists("Smarty")){
-            require_once LIB_PATH."smarty".DS."Smarty.class.php";
+            require_once LIB_PATH."smarty".DS."SmartyBC.class.php";
         }
-        $this->smarty = new \Smarty();
+        $this->smarty = new \SmartyBC();
         $this->smarty->compile_dir = CACHE_PATH."smarty".DS."compile".DS;
         $this->smarty->cache_dir = CACHE_PATH."smarty".DS."cache".DS;
         $this->smarty->registerFilter('pre', array($this, "prefilter_replace"));
+        $this->smarty->registerFilter('post', array($this, "postfilter_replace"));
         $this->addAllAppViewDir();
         foreach ($config as $key=>$value){
             $this->config($key, $value);
@@ -79,6 +84,22 @@ class SmartyDriver implements Driver
             case "view_replace_str":
                 $this->replace($value);
                 break;
+            case "allow_php_tag":
+                if($value){
+                    $this->smarty->php_handling = \Smarty::PHP_ALLOW;
+                }else{
+                    $this->smarty->php_handling = \Smarty::PHP_PASSTHRU;
+                }
+                break;
+            case "left_delimiter":
+                $this->smarty->left_delimiter = $value;
+                break;
+            case "right_delimiter":
+                $this->smarty->right_delimiter = $value;
+                break;
+            case "function_cacheable":
+                $this->function_cacheable = $value;
+                break;
         }
     }
 
@@ -98,11 +119,42 @@ class SmartyDriver implements Driver
         return false;
     }
 
+    public function outReplace($name, $value = null)
+    {
+        if(is_array($name) && is_null($value)){
+            $this->outReplaceMap = array_merge($this->outReplaceMap, $name);
+            return true;
+        } else if(is_string($name) && is_string($value)){
+            $this->outReplaceMap[$name] = $value;
+            return true;
+        }
+        return false;
+    }
+
+
+
+
     public function prefilter_replace($tpl_source, $template){
         foreach ($this->replaceMap as $name=>$value){
             $tpl_source = str_replace($name, $value, $tpl_source);
         }
         return $tpl_source;
+    }
+
+    public function postfilter_replace($tpl_source, $template){
+        foreach ($this->replaceMap as $name=>$value){
+            $tpl_source = str_replace($name, $value, $tpl_source);
+        }
+        return $tpl_source;
+    }
+
+    public function registerFunction($functionName, $asName = null){
+        if(is_null($asName)){
+            $asName = $functionName;
+        }
+        if(is_string($asName)){
+            $this->smarty->registerPlugin("function",$asName, $functionName, $this->function_cacheable);
+        }
     }
 
     private function addAllAppViewDir(){
@@ -127,4 +179,5 @@ class SmartyDriver implements Driver
         }
         $this->smarty->addTemplateDir($dirs);
     }
+
 }
