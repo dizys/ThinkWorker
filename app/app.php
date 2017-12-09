@@ -6,4 +6,4 @@
  *  Author: Dizy <derzart@gmail.com>
  */
 /** Application Default Entrance */
-require __DIR__."common.php";
+require __DIR__."/common.php";

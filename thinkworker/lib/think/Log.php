@@ -20,7 +20,6 @@ class Log
         $engineFullName = "think\\log\\".$driverName."Driver";
         self::$driver = new $engineFullName();
         self::$driver->init($configs);
-        var_dump($engineFullName);
     }
 
     public static function log($type, $marker, $msg){
