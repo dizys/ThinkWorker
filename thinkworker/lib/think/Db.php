@@ -35,7 +35,13 @@ class Db
             self::$configs = $configs;
         }
         $TW_ENV_CAPSULE = new Manager();
-        $TW_ENV_CAPSULE->addConnection(self::$configs);
+        if(isset(self::$configs['default'])){
+            foreach (self::$configs as $name => $config){
+                $TW_ENV_CAPSULE->addConnection($config, $name);
+            }
+        }else{
+            $TW_ENV_CAPSULE->addConnection(self::$configs);
+        }
         $TW_ENV_CAPSULE->setAsGlobal();
         $TW_ENV_CAPSULE->bootEloquent();
     }

@@ -10,7 +10,7 @@ use think\Dispatcher;
 use think\Loader;
 use think\Log;
 use think\Route;
-use think\Server;
+use think\MainServer;
 use think\StaticDispatcher;
 
 /**  Server Core */
@@ -70,9 +70,21 @@ Dispatcher::_init();
 /** Router Initialization */
 Route::_init(Config::get('', "vhost"));
 
-/**  Server Initialization and run */
-Server::_init(config("worker_engine"));
+/** Task Client Initialization */
+if(Config::get("task.enable")){
+    \think\task\TaskClient::_init(Config::get("task"));
+}
+
+/**  MainServer Initialization */
+if(\think\server\Loader::isSingleServer()===false){
+    MainServer::_init(Config::get("worker_engine"));
+}
+
+/** User Servers Initialization */
+if(Config::get("think.enable_servers")){
+    think\server\Loader::load();
+}
 
 /** Run the system */
-Server::run();
+\think\server\Loader::runAll();
 

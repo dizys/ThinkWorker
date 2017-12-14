@@ -254,7 +254,6 @@ class Route
                     $lastPos = strrpos($pattern, "]");
                     if(!($lastPos === false)){
                         $prefix = substr($pattern, 1, $lastPos-1);
-                        //var_dump($rule,$prefix, $uri);
                         $return = self::matchPath($rule,$req, $payload, $cache, $prefix, $uri);
                         if(!($return === false)){
                             return $return;

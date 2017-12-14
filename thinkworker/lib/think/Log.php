@@ -13,16 +13,17 @@ use think\log\FileDriver;
 
 class Log
 {
-    protected static $driver;
+    protected static $driver = null;
     public static function _init($configs){
         $driverName = isset($configs['driver'])?$configs['driver']:"file";
-        $driverName[0] = strtoupper($driverName[0]);
-        $engineFullName = "think\\log\\".$driverName."Driver";
-        self::$driver = new $engineFullName();
+        self::$driver = think_core_new_driver("think\\log", $driverName);
         self::$driver->init($configs);
     }
 
     public static function log($type, $marker, $msg){
+        if(is_null(self::$driver)){
+            return false;
+        }
         $nowTime = time();
         $timeMark = date("H:i:s", $nowTime);
         return self::$driver->write($timeMark." - [ ".$type." ] ".(is_null($marker)?'':("[ "."$marker"." ] ")).$msg."\n");

@@ -64,7 +64,14 @@ class HttpException extends \Exception
 
     public function formErrorMsg(){
         $traceSrc = is_null($this->origin)?$this:$this->origin;
-        $msg = think_core_charset_auto_revert($traceSrc->getMessage());
+        $head = "";
+        try{
+            $eRef = new \ReflectionClass($traceSrc);
+            $head = "[".$eRef->getShortName()."] ";
+        }catch (Throwable $e){
+
+        }
+        $msg = $head.think_core_charset_auto_revert($traceSrc->getMessage());
         return $msg;
     }
 

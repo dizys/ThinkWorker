@@ -19,7 +19,10 @@ return [
         'ssl' => false,
         'ssl_local_cert'  => '/etc/nginx/conf.d/ssl/server.pem',
         'ssl_local_pk'    => '/etc/nginx/conf.d/ssl/server.key',
-        'ssl_verify_peer' => false
+        'ssl_verify_peer' => false,
+
+        'max_request_restart' => true,
+        'max_request_limit' => 1000,
     ],
 
     /**
@@ -27,7 +30,7 @@ return [
      */
     'think' => [
         'debug' => true,
-        'tracing_max_lines' => 7,
+        'tracing_max_lines' => false,
         'default_return_type' => 'html',
         'routing_cache_default' => true,
         'routing_cache_size' => 1000,
@@ -49,6 +52,8 @@ return [
         'xml_root_attr' => '',
         'xml_item_node' => 'item',
         'xml_item_key'  => 'id',
+
+        'enable_servers' => true,
     ],
 
     /**
@@ -71,14 +76,6 @@ return [
     ],
 
     /**
-     *  Session Settings
-     */
-    'session' => [
-        'auto_start' => true,
-        'prefix' => 'think_'
-    ],
-
-    /**
      *  Cookie Settings
      */
     'cookie' => [
@@ -91,10 +88,38 @@ return [
     ],
 
     /**
+     *  Session Settings
+     */
+    'session' => [
+        'driver' => 'file',
+        'auto_start' => true,
+        'prefix' => ''
+    ],
+
+    /**
      *  Log Settings
      */
     'log' => [
         'driver' => 'file',
         'log_path' => LOG_PATH
+    ],
+
+    /**
+     *  Task Queue System Settings
+     */
+    'task' => [
+        'enable' => false,
+        'server_driver' => 'file',
+        'client_driver' => 'file',
+        'port' => 2073,
+        'process_num' => 10,
+        'default_max_try_times' => 4,
+        'check_interval' => 1,
+        'show_server_status' => true,
+        'status_refresh_interval' => 1,
+
+        'db_connection' => 'default',
+        'db_table' => 'tasks',
+
     ]
 ];

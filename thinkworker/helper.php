@@ -9,6 +9,7 @@
 use think\Config;
 use think\Filter;
 use think\Log;
+use think\Session;
 
 if (!function_exists('config')) {
     function config($name = '', $value = null, $range = 'general')
@@ -74,6 +75,22 @@ if (!function_exists('log')) {
         return Log::log($type, $marker, $msg);
     }
 }
+
+if (!function_exists('session')) {
+    function session($name, $value = '')
+    {
+        if (is_null($name) || empty($name)) {
+            Session::clear();
+        } elseif ('' === $value) {
+            return 0 === strpos($name, '?') ? Session::has(substr($name, 1)) : Session::get($name);
+        } elseif (is_null($value)) {
+            return Session::delete($name);
+        } else {
+            return Session::set($name, $value);
+        }
+    }
+}
+
 
 if (!function_exists('lang')) {
     function lang($name, ...$vars){

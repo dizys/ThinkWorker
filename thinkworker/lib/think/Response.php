@@ -15,7 +15,6 @@ class Response
 {
     protected $connection;
     protected $req;
-    private $sessionPrefix;
     private $cookiePrefix;
     private $sent;
     /**
@@ -26,27 +25,28 @@ class Response
     {
         $this->connection = $connection;
         $this->req = $req;
-        $this->sessionPrefix = is_null(config("session.prefix"))?'':trim(config("session.prefix"));
         $this->cookiePrefix = is_null(config("cookie.prefix"))?'':trim(config("cookie.prefix"));
         $this->sent = false;
     }
 
     public function sessionStart(){
-        return Http::sessionStart();
+        return Session::startSession();
     }
 
     public function setSession($name, $value){
-        $_SESSION[$this->sessionPrefix.$name] = $value;
-        return true;
+        return Session::set($name, $value);
     }
 
     public function saveSession(){
-        return Http::sessionWriteClose();
+        return Session::closeSession();
+    }
+
+    public function deleteSession($name){
+        return Session::delete($name);
     }
 
     public function clearSession(){
-        $_SESSION = ["placeholder"];
-        return true;
+        return Session::clear();
     }
 
     public function setHeader($content, $replace = true, $statusCode = 0){

@@ -59,9 +59,7 @@ class View
     private function enginePrepare(){
         $configs = config("template");
         $engine = $configs['engine'];
-        $engine[0] = strtoupper($engine[0]);
-        $engineFullName = "think\\view\\".$engine."Driver";
-        $this->template = new $engineFullName();
+        $this->template = think_core_new_driver("think\\view", $engine);
         $this->template->init($configs);
         $fileExt = config('template.tpl_ext');
         $this->fileExt = is_null($fileExt)?"html":$fileExt;

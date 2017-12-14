@@ -196,10 +196,6 @@ class Loader
     public static function register($autoload=false){
         spl_autoload_register($autoload ?: 'think\\Loader::autoload', true, true);
     }
-
-    public static function test(){
-        var_dump(self::$psr4Map);
-    }
 }
 
 /**

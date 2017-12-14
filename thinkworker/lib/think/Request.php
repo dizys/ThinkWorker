@@ -28,7 +28,6 @@ class Request
     protected $fullRequestUri;
     protected $ip;
 
-    private $sessionPrefix;
     private $cookiePrefix;
 
     //Unstable
@@ -41,9 +40,7 @@ class Request
     {
         $this->headers = $data['server'];
         $this->method = strtoupper($this->headers['REQUEST_METHOD']);
-        $this->sessionPrefix = is_null(config("session.prefix"))?'':trim(config("session.prefix"));
         $this->cookiePrefix = is_null(config("cookie.prefix"))?'':trim(config("cookie.prefix"));
-        $sessionPrefixLen = strlen($this->sessionPrefix);
         $cookiePrefixLen = strlen($this->cookiePrefix);
         foreach ($data['get'] as $key=>$value){
             $this->get[filter($key)] = filter($value);
@@ -59,13 +56,7 @@ class Request
             }
             $this->cookie[filter($key)] = filter($value);
         }
-        foreach ($_SESSION as $key=>$value){
-            if(substr($key, 0, $sessionPrefixLen) == $this->sessionPrefix){
-                $this->session[filter(substr($key, $sessionPrefixLen))] = filter($value);
-            }else{
-                $this->session[filter($key)] = filter($value);
-            }
-        }
+        $this->session =  Session::get();
         $this->files = [];
         foreach ($data['files'] as $fileinfo){
             array_push($this->files, new File($fileinfo));
@@ -133,6 +124,10 @@ class Request
         } else {
             return isset($this->session[$key]) ? $this->session[$key] : null;
         }
+    }
+
+    public function freshSession(){
+        $this->session = Session::get();
     }
 
     public function file($name = null){

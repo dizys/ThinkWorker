@@ -18,9 +18,16 @@ if(!function_exists("wildcardMatch")){
 }
 
 if(!function_exists("describeException")){
-    function describeException(Exception $e)
+    function describeException(Throwable $e)
     {
-        return $e->getFile()."(".$e->getLine()."): ".$e->getMessage()."\n".$e->getTraceAsString();
+        $head = "";
+        try {
+            $eRef = new ReflectionClass($e);
+            $head = "[".$eRef."] ";
+        }catch (Throwable $e){
+
+        }
+        return $head.$e->getFile()."(".$e->getLine()."): ".$e->getMessage()."\n".$e->getTraceAsString();
     }
 }
 
@@ -399,5 +406,143 @@ if(!function_exists("think_core_in_array_or_string")) {
             }
         }
         return $has;
+    }
+}
+
+if(!function_exists("think_core_is_win")){
+    function think_core_is_win(){
+        return strtoupper(substr(PHP_OS,0,3))==='WIN';
+    }
+}
+
+if(!function_exists("is_null_or_empty")){
+    function is_null_or_empty($thing){
+        return (!isset($thing)) || is_null($thing) || empty($thing);
+    }
+}
+
+if(!function_exists("think_core_new_class")){
+    function think_core_new_class($classFullName){
+        try{
+            new $classFullName;
+            return true;
+        }catch (Throwable $e){
+            return false;
+        }
+    }
+}
+
+if(!function_exists("think_core_new_driver")){
+    function think_core_new_driver($coreNamespace, $driver){
+        $driverNameCore = $driver;
+        $driverNameCore[0] = strtoupper($driverNameCore[0]);
+        $driverFullName = $coreNamespace."\\".$driverNameCore."Driver";
+        try{
+            $driverIns = new $driverFullName();
+            return $driverIns;
+        }catch (\Throwable $e){
+
+        }
+        $driverIns = new $driver();
+        return $driverIns;
+    }
+}
+
+if(!function_exists("think_core_task_analyze")){
+    function think_core_task_analyze($taskNamespace){
+        $nameRep = explode("\\", $taskNamespace, 4);
+        if(count($nameRep)<4){
+            return null;
+        }
+        $appName = $nameRep[1];
+        $taskNamespace = $nameRep[3];
+        return (object)["app"=>$appName, "task"=>$taskNamespace];
+    }
+}
+
+if(!function_exists("think_core_can_write")){
+    function think_core_can_write($fp){
+        $startTime=microtime();
+        do{
+            $canWrite=flock($fp,LOCK_EX);
+            if(!$canWrite){
+                usleep(round(rand(0,100)*1000));
+            }
+        }while((!$canWrite)&&((microtime()-$startTime)<1000));
+        return $canWrite;
+    }
+}
+
+if(!function_exists("think_core_fread")){
+    function think_core_fread($fp){
+        rewind($fp);
+        $content = "";
+        do{
+            $tmp = fread($fp, 100);
+            $content .= $tmp;
+        }while(!empty($tmp));
+        rewind($fp);
+        return $content;
+    }
+}
+
+if(!function_exists("think_core_release_write")){
+    function think_core_release_write($fp){
+        flock($fp, LOCK_UN);
+        fclose($fp);
+    }
+}
+
+if(!function_exists("think_core_print_error")){
+    function think_core_print_error($msg, $description = null){
+        echo "====================== ThinkWorker Error =====================\n";
+        echo "    Error: ".$msg."\n";
+        if($description != null){
+            echo  "   ".$description."\n";
+        }
+        echo "============================================================\n\n";
+    }
+}
+
+if(!function_exists("think_core_print_info")){
+    function think_core_print_info($msg, $description = null){
+        echo " [ThinkWorker] [info] ".$msg.(is_null($description)?"":":".$description)."\n";
+    }
+}
+
+if(!function_exists("think_tool_get_rand_str")){
+    function think_tool_get_rand_str($len) {
+        srand(think_tool_get_rand_sid());
+        $possible="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+        $str="";
+        while(strlen($str)<$len) {
+            $str.=substr($possible,(rand()%(strlen($possible))),1);
+        }
+        return($str);
+    }
+
+}
+
+if(!function_exists("think_tool_get_rand_str_all_lower")){
+    function think_tool_get_rand_str_all_lower($len) {
+        srand(think_tool_get_rand_sid());
+        $possible="abcdefghijklmnopqrstuvwxyz1234567890";
+        $str="";
+        while(strlen($str)<$len) {
+            $str.=substr($possible,(rand()%(strlen($possible))),1);
+        }
+        return($str);
+    }
+
+}
+
+
+if(!function_exists("think_tool_get_rand_sid")){
+    function think_tool_get_rand_sid() {
+        global $TW_CORE_RAND_SID;
+        isset($TW_CORE_RAND_SID) or $TW_CORE_RAND_SID = date("s");
+        srand($TW_CORE_RAND_SID);
+        $TW_CORE_RAND_SID = rand();
+        return $TW_CORE_RAND_SID;
     }
 }
