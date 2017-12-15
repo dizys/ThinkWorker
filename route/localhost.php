@@ -6,6 +6,7 @@
  *  Author: Dizy <derzart@gmail.com>
  */
 
+/** Routing rules for localhost */
 return [
     '/' => 'index/Index/index',
 ];

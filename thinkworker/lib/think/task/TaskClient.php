@@ -17,6 +17,7 @@ class TaskClient
      * @var null|Driver
      */
     protected static $driver = null;
+
     /**
      * @var int
      */

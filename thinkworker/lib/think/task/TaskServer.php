@@ -8,7 +8,6 @@
 
 namespace think\task;
 
-
 use think\Config;
 use think\Log;
 use think\Server;
@@ -34,6 +33,9 @@ class TaskServer extends Server
     {
         $configs = Config::get("task");
         $this->process_num= is_null($configs["process_num"])?10:$configs["process_num"];
+        if($configs['show_server_status'] && !think_core_is_win()){
+            $this->process_num+=1;
+        }
         $this->socket = "tcp://0.0.0.0:".(is_null($configs["port"])?2073:$configs["port"]);
         $this->defaultMaxTryTimes = is_null($configs["default_max_try_times"])?4:$configs["default_max_try_times"];
         $this->timerInterval = is_null($configs["check_interval"])?1:$configs["check_interval"];
@@ -47,17 +49,20 @@ class TaskServer extends Server
     public function onWorkerStart($worker)
     {
         if($this->driver){
-            $this->timerId = Timer::add($this->timerInterval, array($this, "onTimerStrike"));
+            $this->timerId = Timer::add($this->timerInterval, array($this, "onTimerStrike"), array($worker->id));
         }
     }
 
-    public function onTimerStrike(){
-        if(Config::get("task.show_server_status")){
+    public function onTimerStrike($worker_id){
+        if(Config::get("task.show_server_status") && $worker_id == 0){
             $nowTime = time();
             $interval = Config::get("task.status_refresh_interval")?:5;
             if($nowTime - $this->timer_last_time > $interval){
                 $this->timer_last_time = $nowTime;
                 $this->printTaskServerStatus();
+            }
+            if(!think_core_is_win()){
+                return;
             }
         }
 
@@ -65,7 +70,9 @@ class TaskServer extends Server
         if(!is_null($task)){
             $taskInfo = $this->driver->check($task);
             if($taskInfo){
-                $taskFullName = "app\\".$taskInfo->app."\\task\\".$taskInfo->task;
+                $appRootNameSpace = Config::get("think.app_namespace");
+                $appRootNameSpace = is_null($appRootNameSpace)?"app":$appRootNameSpace;
+                $taskFullName = $appRootNameSpace."\\".$taskInfo->app."\\task\\".$taskInfo->task;
                 try{
                     $taskIns = new $taskFullName();
                     if(is_callable(array($taskIns, "_init"))){

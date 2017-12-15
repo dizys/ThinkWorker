@@ -14,27 +14,86 @@ use Workerman\Protocols\Http;
 class Request
 {
     //Stable
+    /**
+     * @var array
+     */
     protected $headers;
+
+    /**
+     * @var string
+     */
     protected $method;
+
+    /**
+     * @var array
+     */
     protected $post;
+
+    /**
+     * @var array
+     */
     protected $get;
+
+    /**
+     * @var array
+     */
     protected $payload;
+
+    /**
+     * @var array
+     */
     protected $cookie;
+
+    /**
+     * @var array|null
+     */
     protected $session;
+
+    /**
+     * @var array
+     */
     protected $files;
 
+    /**
+     * @var string
+     */
     protected $hostname;
+
+    /**
+     * @var string
+     */
     protected $requestUri;
+
+    /**
+     * @var string
+     */
     protected $fullRequestUri;
+
+    /**
+     * @var string
+     */
     protected $ip;
 
+    /**
+     * @var string
+     */
     private $cookiePrefix;
 
     //Unstable
+    /**
+     * @var null|Lang
+     */
     protected $lang = null;
+
+    /**
+     * @var null|object
+     */
     protected $controllerInfo = null;
+
     /**
      * Request constructor.
+     *
+     * @param array $data
      */
     public function __construct($data)
     {
@@ -42,12 +101,15 @@ class Request
         $this->method = strtoupper($this->headers['REQUEST_METHOD']);
         $this->cookiePrefix = is_null(config("cookie.prefix"))?'':trim(config("cookie.prefix"));
         $cookiePrefixLen = strlen($this->cookiePrefix);
+        // Parsing get parameters
         foreach ($data['get'] as $key=>$value){
             $this->get[filter($key)] = filter($value);
         }
+        // Parsing post parameters
         foreach ($data['post'] as $key=>$value){
             $this->post[filter($key)] = filter($value);
         }
+        // Parsing cookie values
         foreach ($data['cookie'] as $key=>$value){
             if(substr($key, 0, $cookiePrefixLen) == $this->cookiePrefix){
                 $this->cookie[filter(substr($key, $cookiePrefixLen))] = filter($value);
@@ -56,7 +118,9 @@ class Request
             }
             $this->cookie[filter($key)] = filter($value);
         }
+        // Get sessions
         $this->session =  Session::get();
+        // Parsing files
         $this->files = [];
         foreach ($data['files'] as $fileinfo){
             array_push($this->files, new File($fileinfo));
@@ -70,6 +134,13 @@ class Request
         $this->ip = $this->headers['REMOTE_ADDR'];
     }
 
+    /**
+     * Get a GET parameter or all
+     *
+     * @param string|null $key
+     * @param null $value
+     * @return mixed|null|object
+     */
     public function get($key=null, $value=null){
         if(is_null($key)){
             return (object)$this->get;
@@ -81,6 +152,13 @@ class Request
         }
     }
 
+    /**
+     * Get a POST parameter or all
+     *
+     * @param string|null $key
+     * @param null $value
+     * @return mixed|null|object
+     */
     public function post($key=null, $value=null){
         if(is_null($key)){
             return (object)$this->post;
@@ -92,6 +170,12 @@ class Request
         }
     }
 
+    /**
+     * Get RAW POST data
+     *
+     * @param null $data
+     * @return string
+     */
     public function rawPost($data=null){
         if(is_null($data)){
             return filter($GLOBALS['HTTP_RAW_POST_DATA']);
@@ -100,6 +184,12 @@ class Request
         }
     }
 
+    /**
+     * Get a URI payload or all
+     *
+     * @param string|null $data
+     * @return mixed|null|object
+     */
     public function payload($data=null){
         if(is_array($data)){
             $this->payload = $data;
@@ -110,6 +200,12 @@ class Request
         }
     }
 
+    /**
+     * Get a cookie value or all
+     *
+     * @param null $key
+     * @return mixed|null|object
+     */
     public function cookie($key = null){
         if(is_null($key)){
             return (object) $this->cookie;
@@ -118,6 +214,12 @@ class Request
         }
     }
 
+    /**
+     * Get a session value or all
+     *
+     * @param string|null $key
+     * @return mixed|null|object
+     */
     public function session($key = null){
         if(is_null($key)){
             return (object) $this->session;
@@ -126,10 +228,21 @@ class Request
         }
     }
 
+    /**
+     * Refresh session content
+     *
+     * @return void
+     */
     public function freshSession(){
         $this->session = Session::get();
     }
 
+    /**
+     * Get a posted file or all
+     *
+     * @param string|null $name
+     * @return array|File|null
+     */
     public function file($name = null){
         if(is_null($name)){
             return $this->files;
@@ -143,30 +256,65 @@ class Request
         return null;
     }
 
+    /**
+     * Get client IP
+     *
+     * @return string
+     */
     public function getIp(){
         return $this->ip;
     }
 
+    /**
+     * Get requested hostname
+     *
+     * @return string
+     */
     public function getHostname(){
         return $this->hostname;
     }
 
+    /**
+     * Get requested uri without parameters
+     *
+     * @return string
+     */
     public function getUri(){
         return $this->requestUri;
     }
 
+    /**
+     * Get full requested uri
+     *
+     * @return string
+     */
     public function getFullUri(){
         return $this->fullRequestUri;
     }
 
+    /**
+     * Get requested headers
+     *
+     * @return array
+     */
     public function getHeaders(){
         return $this->headers;
     }
 
+    /**
+     * Get request method
+     *
+     * @return string
+     */
     public function getMethod(){
         return $this->method;
     }
 
+    /**
+     * Get Lang object, automatically adapt to the language context
+     *
+     * @return null|Lang
+     */
     public function getLang(){
         if(!is_null($this->lang)){
             return $this->lang;
@@ -196,6 +344,12 @@ class Request
         }
     }
 
+    /**
+     * Dynamically get property
+     *
+     * @param String $name
+     * @return array|null|object|string|File
+     */
     public function __get($name)
     {
         if($name == "get"){
@@ -231,6 +385,13 @@ class Request
         }
     }
 
+    /**
+     * Dynamically set property
+     *
+     * @param $name
+     * @param $value
+     * @return void
+     */
     public function __set($name, $value)
     {
         if($name == "controllerInfo"){

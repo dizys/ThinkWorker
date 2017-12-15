@@ -11,6 +11,12 @@ namespace think;
 
 class Filter
 {
+    /**
+     * Filter the String with default functions
+     *
+     * @param string $body
+     * @return string
+     */
     public static function filt($body){
         $filters = config("think.default_filter");
         $filters = explode(",", $filters);

@@ -9,13 +9,26 @@
 namespace think;
 use think\exception\HttpException;
 use think\exception\UnknownException;
+use think\task\TaskClient;
+use Workerman\Connection\TcpConnection;
 use Workerman\Worker;
 use think\exception\FatalException;
 
 class MainServer
 {
+    /**
+     * @var Worker
+     */
     public static $worker;
+
+    /**
+     * @var callable
+     */
     public static $onWorkerStart = null;
+
+    /**
+     * @var array
+     */
     private static $configs = [
         'listen_ip' => '0.0.0.0',
         'listen_port' => 80,
@@ -29,6 +42,11 @@ class MainServer
         'max_request_limit' => 1000,
     ];
 
+    /**
+     * MainServer initialization method
+     *
+     * @param array $configs
+     */
     public static function _init($configs){
         //Basic Worker config
         !isset($configs['listen_ip']) or self::$configs['listen_ip'] = $configs['listen_ip'];
@@ -62,22 +80,29 @@ class MainServer
 
         //Event Hooking
         self::$worker->onWorkerStart = function(){self::onWorkerStart();};
+        self::$worker->onWorkerReload = function(){self::onWorkerReload();};
         self::$worker->onMessage = function($connection, $data){self::onMessage($connection, $data);};
     }
 
+    /**
+     * Worker onWorkerStart Callback
+     *
+     * @return void
+     */
     private static function onWorkerStart(){
-        Db::_init_by_worker_process(Config::get(null, "database"));
-        Session::_init(Config::get("session"));
-
-        /** Bootstrap App File */
-        if(is_file(APP_PATH . "app.php")){
-            require_once APP_PATH . "app.php";
-        }
+        \think\server\Loader::loadEssentials();
         if(!is_null(self::$onWorkerStart) && is_callable(self::$onWorkerStart)){
             (self::$onWorkerStart)();
         }
     }
 
+    /**
+     * Worker onMessage Callback
+     *
+     * @param TcpConnection $connection
+     * @param mixed $data
+     * @return void
+     */
     private static function onMessage($connection, $data){
         global $TW_ENV_REQUEST, $TW_ENV_RESPONSE;
         //Session auto start
@@ -109,7 +134,7 @@ class MainServer
             //Caught FatalException then log error and shut down server
             $eDesc = describeException($e);
             Log::e($eDesc, "FatalException");
-        }catch (\Exception $e){
+        }catch (\Throwable $e){
             //Unknown but not Fatal Exception
             $ne = new UnknownException($e);
             $resp->setHeader("HTTP", true, $ne->getStatusCode());
@@ -122,17 +147,54 @@ class MainServer
         if(self::$configs["max_request_restart"] && !think_core_is_win()){
             static $request_count = 0;
             if(++$request_count >= self::$configs['max_request_limit']){
-                self::stopAll();
+                self::stop();
             }
         }
 
     }
 
+    /**
+     * Worker onWorkerReload Callback
+     *
+     * @return void
+     */
+    public static function onWorkerReload(){
+        /** Configs Initialization */
+        Config::_init();
+
+        /** Logger Initialization */
+        Log::_init(Config::get("log"));
+
+        /** Static File Dispatcher Initialization */
+        StaticDispatcher::_init();
+
+        /** Dispatcher Initialization */
+        Dispatcher::_init();
+
+        /** Router Initialization */
+        Route::_init(Config::get('', "vhost"));
+
+        /** Task Client Initialization */
+        if(Config::get("task.enable")){
+           TaskClient::_init(Config::get("task"));
+        }
+    }
+
+    /**
+     * Run all workers
+     *
+     * @return void
+     */
     public static function run(){
         Worker::runAll();
     }
 
-    public static function stopAll(){
+    /**
+     * Stop current worker process
+     *
+     * @return void
+     */
+    public static function stop(){
         Worker::stopAll();
     }
 }

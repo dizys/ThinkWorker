@@ -9,10 +9,37 @@
 namespace think;
 
 
+use think\view\Driver;
+
 class View
 {
+    /**
+     * @var Driver
+     */
     protected $template;
-    protected $filePath, $fileExt, $appName;
+
+    /**
+     * @var string
+     */
+    protected $filePath;
+
+    /**
+     * @var string
+     */
+    protected $fileExt;
+
+    /**
+     * @var string
+     */
+    protected $appName;
+
+    /**
+     * View constructor.
+     *
+     * @param string $appName
+     * @param string|null $viewfile
+     * @param array|null $values
+     */
     public function __construct($appName, $viewfile = null, $values = null)
     {
         $this->enginePrepare();
@@ -56,6 +83,11 @@ class View
         }
     }
 
+    /**
+     * Prepare template engine
+     *
+     * @return void
+     */
     private function enginePrepare(){
         $configs = config("template");
         $engine = $configs['engine'];
@@ -65,39 +97,98 @@ class View
         $this->fileExt = is_null($fileExt)?"html":$fileExt;
     }
 
+    /**
+     * Prepare template file path
+     *
+     * @param string $appName
+     * @param string $viewfile
+     * @return void
+     */
     private function filepathPrepare($appName, $viewfile){
         $this->filePath = $this->parseTemplateFilepath($appName, $viewfile);
     }
 
+    /***
+     * Convert app name and view file to real file path
+     *
+     * @param string $appName
+     * @param string $viewfile
+     * @return string
+     */
     private function parseTemplateFilepath($appName, $viewfile){
         $viewfile = rtrim($viewfile, ".".$this->fileExt);
         return fix_slashes_in_path(APP_PATH.$appName.DS."view".DS.$viewfile.".".$this->fileExt);
     }
 
+    /**
+     * Replace the content of the template
+     *
+     * @param string|array $name
+     * @param string|null $value
+     * @return void
+     */
     public function replace($name, $value = null){
         $this->template->replace($name, $value);
     }
 
+    /**
+     * Replace the content of the View rendering output
+     *
+     * @param string|array $name
+     * @param string|null $value
+     * @return void
+     */
     public function outReplace($name, $value = null){
         $this->template->outReplace($name, $value);
     }
 
+    /**
+     * Assign a variable value or multiple values for View
+     *
+     * @param string|array $name
+     * @param string|null $value
+     * @return void
+     */
     public function assign($name, $value = null){
         $this->template->assign($name, $value);
     }
 
+    /**
+     * Clear the assign for a variable value or multiple values
+     *
+     * @param string|array $name
+     * @return void
+     */
     public function clearAssign($name){
         $this->template->clearAssign($name);
     }
 
+    /**
+     * Clear all the assigns for View
+     *
+     * @return void
+     */
     public function clearAllAssign(){
         $this->template->clearAllAssign();
     }
 
-    public function registerFunction($functionName, $asName = null){
-        $this->template->registerFunction($functionName, $asName);
+    /**
+     * Register template-usable function for View
+     *
+     * @param callable $callable
+     * @param string|null $asName
+     * @return void
+     */
+    public function registerFunction($callable, $asName = null){
+        $this->template->registerFunction($callable, $asName);
     }
 
+    /**
+     * Get the html output
+     *
+     * @param string|null $template
+     * @return string
+     */
     public function fetch($template = null){
         if(is_null($template)){
             return $this->template->fetch($this->filePath);
@@ -119,10 +210,23 @@ class View
         }
     }
 
+    /**
+     * Config template engine
+     *
+     * @param string $name
+     * @param string $value
+     * @return void
+     */
     public function config($name, $value){
         $this->template->config($name, $value);
     }
 
+    /**
+     * Dynamically get property
+     *
+     * @param string $name
+     * @return Driver
+     */
     public function __get($name)
     {
         if($name == "driver"){

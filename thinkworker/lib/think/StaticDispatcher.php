@@ -20,10 +20,20 @@ class StaticDispatcher
      */
     protected static $mimeTypeMap = array();
 
+    /**
+     * Static resource dispatcher initialization method
+     *
+     * @return void
+     */
     public static function _init(){
         self::initMimeTypeMap();
     }
 
+    /**
+     * Initialize mime-type map
+     *
+     * @return void
+     */
     private static function initMimeTypeMap(){
         //Workerman Http protocol inner mime type maps
         $mime_file = Http::getMimeTypesFile();
@@ -48,11 +58,23 @@ class StaticDispatcher
         }
     }
 
+    /**
+     * Get mime-type map
+     *
+     * @return array
+     */
     public static function getMimeTypeMap(){
         return self::$mimeTypeMap;
     }
 
-    public static function dispatch($req, $resp){
+    /**
+     * Try match and dispatch static resources
+     *
+     * @param Request $req
+     * @param Response $resp
+     * @return bool
+     */
+    public static function dispatch(Request $req, Response $resp){
         //todo: http 1.1 Content-Range Support
         $filepath = self::tryMatchFileName($req);
         if($filepath === false){return false;}
@@ -61,7 +83,13 @@ class StaticDispatcher
 
     }
 
-    private static function tryMatchFileName($req){
+    /**
+     * Match static filename with Request
+     *
+     * @param Request $req
+     * @return bool|string
+     */
+    private static function tryMatchFileName(Request $req){
         $uri = str_replace("/", DS, $req->uri);
         $uri = substr($uri, 1);
         $urlInfo = pathinfo($uri);
@@ -74,6 +102,12 @@ class StaticDispatcher
         }
     }
 
+    /**
+     * Send file to client
+     *
+     * @param string $filepath
+     * @param Response $resp
+     */
     private static function sendFile($filepath, Response $resp){
         $resp->sendFile($filepath);
     }

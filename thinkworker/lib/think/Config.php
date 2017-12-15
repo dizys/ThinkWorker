@@ -12,6 +12,12 @@ namespace think;
 class Config
 {
     private static $config = [];
+
+    /**
+     * Config Component  Initialization
+     *
+     * @return void
+     */
     public static function _init(){
         foreach(glob(CONF_PATH.'*'.CONF_EXT) as $configFile)
         {
@@ -22,6 +28,14 @@ class Config
         }
     }
 
+    /**
+     * Set a specific config value or multiple values
+     *
+     * @param string|array $name
+     * @param string $value
+     * @param string $range
+     * @return array|mixed
+     */
     public static function set($name, $value, $range = "general"){
         if (!isset(self::$config[$range])) {
             self::$config[$range] = [];
@@ -33,7 +47,6 @@ class Config
                 $name  = explode('.', $name, 2);
                 self::$config[$range][strtolower($name[0])][$name[1]] = $value;
             }
-            return;
         } elseif (is_array($name)) {
             if (!empty($value)) {
                 self::$config[$range][$value] = isset(self::$config[$range][$value]) ?
@@ -47,6 +60,13 @@ class Config
         }
     }
 
+    /**
+     * Get a specific config value
+     *
+     * @param $name
+     * @param string $range
+     * @return mixed|null
+     */
     public static function get($name, $range = "general"){
         if ((empty($name)||is_null($name))&& isset(self::$config[$range])) {
             return self::$config[$range];
@@ -61,6 +81,13 @@ class Config
         }
     }
 
+    /**
+     * Determine whether a key is set in config
+     *
+     * @param $name
+     * @param string $range
+     * @return bool
+     */
     public static function has($name, $range = "general"){
         if (!strpos($name, '.')) {
             return isset(self::$config[$range][strtolower($name)]);

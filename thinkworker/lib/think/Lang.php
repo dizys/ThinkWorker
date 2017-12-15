@@ -11,8 +11,27 @@ namespace think;
 
 class Lang
 {
-    protected $lang, $app;
+    /**
+     * @var string
+     */
+    protected $lang;
+
+    /**
+     * @var string
+     */
+    protected $app;
+
+    /**
+     * @var array
+     */
     protected $langRules = [];
+
+    /**
+     * Lang constructor.
+     *
+     * @param string|null $lang
+     * @param string|null $app
+     */
     public function __construct($lang=null, $app = null)
     {
         if(is_null($lang)){
@@ -24,6 +43,11 @@ class Lang
         $this->langPackPrepare();
     }
 
+    /**
+     * Prepare the language pack
+     *
+     * @return void
+     */
     private function langPackPrepare(){
         $this->loadFromDir(LANG_PATH);
         if(!is_null($this->app)){
@@ -31,6 +55,12 @@ class Lang
         }
     }
 
+    /**
+     * Load in a specific language pack file
+     *
+     * @param string $file
+     * @return bool
+     */
     public function load($file){
         if(is_file($file)){
             $lang = include($file);
@@ -42,6 +72,12 @@ class Lang
         return false;
     }
 
+    /**
+     * Load from a directory, while the filename is automatically decided by current language name
+     *
+     * @param $dirpath
+     * @return bool
+     */
     public function loadFromDir($dirpath){
         $dirpath = fix_slashes_in_path($dirpath);
         $dirpath = rtrim($dirpath,DS).DS;
@@ -53,6 +89,13 @@ class Lang
         }
     }
 
+    /**
+     * Set a language pack item or multiple items in this object
+     *
+     * @param string|array $name
+     * @param string|null $text
+     * @return void
+     */
     public function set($name, $text=null){
         if(is_array($name) && is_null($text)){
             $this->langRules = array_merge($this->langRules, $name);
@@ -61,6 +104,12 @@ class Lang
         }
     }
 
+    /**
+     * Unset a language pack item or multiple items in this object
+     *
+     * @param string|array $name
+     * @return void
+     */
     public function unset($name){
         if(is_array($name)){
             foreach ($name as $item){
@@ -71,10 +120,22 @@ class Lang
         }
     }
 
+    /**
+     * Unset all items in this object
+     *
+     * @return void
+     */
     public function unsetAll(){
         $this->langRules = [];
     }
 
+    /**
+     * Get a language pack item text
+     *
+     * @param string $name
+     * @param array ...$vars
+     * @return string
+     */
     public function get($name, ...$vars){
         if(!isset($this->langRules[$name]) || is_null($this->langRules[$name])){
             return $name;
@@ -97,6 +158,11 @@ class Lang
         }
     }
 
+    /**
+     * Get current language name
+     *
+     * @return string
+     */
     public function getLang(){
         return $this->lang;
     }

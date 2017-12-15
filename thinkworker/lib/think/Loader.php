@@ -11,22 +11,38 @@ namespace think;
 
 class Loader
 {
+    /**
+     * @var array
+     */
     protected static $psr4Map = [];
+
+    /**
+     * Autoload Hook
+     *
+     * @param string $class
+     * @return bool
+     */
     public static function autoload($class){
         $class = ltrim($class, '\\');
 
+        /* Try Mapping */
         if(self::loadMapping($class)){
             return true;
         }
 
+        /* Try ThinkWorker core files */
         if(substr($class, 0, 6) == "think\\" && self::loadcore($class)){
             return true;
         }
 
-        if(substr($class, 0, 4) == "app\\" && self::loadapp($class)){
+        /* Try app files */
+        $appRootNameSpace = Config::get("think.app_namespace");
+        $appRootNameSpace = is_null($appRootNameSpace)?"app":$appRootNameSpace;
+        if(substr($class, 0, strlen($appRootNameSpace)+1) == $appRootNameSpace."\\" && self::loadapp($class)){
             return true;
         }
 
+        /* Try extent files */
         if(self::loadextent($class)){//In A Psr0 Way!
             return true;
         }
@@ -34,6 +50,13 @@ class Loader
         return false;
     }
 
+    /**
+     * Add namespace=>path mapping relationship, one or multiple
+     *
+     * @param string|array $nameSpace
+     * @param string|null $path
+     * @return bool
+     */
     public static function addMap($nameSpace, $path = null){
         if(is_array($nameSpace)){
             foreach ($nameSpace as $key => $value){
@@ -47,6 +70,13 @@ class Loader
         return false;
     }
 
+    /**
+     * Add single one mapping relationship
+     *
+     * @param string $nameSpace
+     * @param string $path
+     * @return bool
+     */
     private static function addOneMap($nameSpace, $path){
         if(0 === think_core_strrposBack($path, EXT)){
             $path = fix_slashes_in_path($path);
@@ -59,6 +89,12 @@ class Loader
         return true;
     }
 
+    /**
+     * Remove mapping relationship, one or multiple
+     *
+     * @param string|array $nameSpace
+     * @return bool
+     */
     public static function rmMap($nameSpace){
         if(is_array($nameSpace)){
             foreach ($nameSpace as $name){
@@ -78,12 +114,24 @@ class Loader
         return false;
     }
 
+    /**
+     * Load ThinkWorker core class file
+     *
+     * @param string $coreClass
+     * @return bool
+     */
     private static function loadcore($coreClass){
         $fileName = self::classToCoreFilePath($coreClass);
         __require_file($fileName);
         return class_exists($coreClass);
     }
 
+    /**
+     * Load app class file
+     *
+     * @param string $appClass
+     * @return bool
+     */
     private static function loadapp($appClass){
         $fileName = self::classToAppFilePathPsr0($appClass);
         if(!is_file($fileName)){
@@ -93,11 +141,19 @@ class Loader
         return class_exists($appClass);
     }
 
+    /**
+     * Load class file added in map
+     *
+     * @param string $mapClass
+     * @return bool
+     */
     private static function loadMapping($mapClass){
+        /* File mapping */
         if(isset(self::$psr4Map[$mapClass])){
             __include_file(self::$psr4Map[$mapClass]);
             return class_exists($mapClass);
         }
+        /* Directory mapping */
         foreach (self::$psr4Map as $mapKey => $mapVal){
             $mapKey = rtrim($mapKey, "\\")."\\";
             $find = strpos($mapClass, $mapKey);
@@ -117,14 +173,24 @@ class Loader
         return false;
     }
 
+    /**
+     * Load extent class file
+     *
+     * @param string $extentClass
+     * @return bool
+     */
     private static function loadextent($extentClass){
         $fileName = self::classToExtentPath($extentClass);
         __include_file($fileName);
         return class_exists($extentClass);
     }
 
-
-
+    /**
+     * Convert core class name to real file path
+     *
+     * @param string $coreClass
+     * @return string
+     */
     public static function classToCoreFilePath($coreClass){
         $lastNsPos = strrpos($coreClass, '\\');
         $namespace = substr($coreClass, 0, $lastNsPos);
@@ -134,8 +200,16 @@ class Loader
         return $fileName;
     }
 
+    /**
+     * Convert app class name to real file path (Psr0)
+     *
+     * @param string $appClass
+     * @return string
+     */
     public static function classToAppFilePathPsr0($appClass){
-        $appClass = substr($appClass, 4);
+        $appRootNameSpace = Config::get("think.app_namespace");
+        $appRootNameSpace = is_null($appRootNameSpace)?"app":$appRootNameSpace;
+        $appClass = substr($appClass, strlen($appRootNameSpace)+1);
         $lastNsPos = strrpos($appClass, '\\');
         $namespace = substr($appClass, 0, $lastNsPos);
         $className = substr($appClass, $lastNsPos + 1);
@@ -144,8 +218,16 @@ class Loader
         return $fileName;
     }
 
+    /**
+     * Convert app class name to real file path
+     *
+     * @param string $appClass
+     * @return string
+     */
     public static function classToAppFilePath($appClass){
-        $appClass = substr($appClass, 4);
+        $appRootNameSpace = Config::get("think.app_namespace");
+        $appRootNameSpace = is_null($appRootNameSpace)?"app":$appRootNameSpace;
+        $appClass = substr($appClass, strlen($appRootNameSpace)+1);
         $lastNsPos = strrpos($appClass, '\\');
         $namespace = substr($appClass, 0, $lastNsPos);
         $className = substr($appClass, $lastNsPos + 1);
@@ -154,6 +236,13 @@ class Loader
         return $fileName;
     }
 
+    /**
+     * Convert mapped class name to real file path (psr0)
+     *
+     * @param string $prs4Class
+     * @param string $dirpath
+     * @return string
+     */
     public static function classToMappingPathPsr0($prs4Class, $dirpath){
         $lastNsPos = strrpos($prs4Class, '\\');
         $namespace = "";
@@ -169,6 +258,13 @@ class Loader
         return $fileName;
     }
 
+    /**
+     * Convert mapped class name to real file path
+     *
+     * @param string $prs4Class
+     * @param string $dirpath
+     * @return string
+     */
     public static function classToMappingPath($prs4Class, $dirpath){
         $lastNsPos = strrpos($prs4Class, '\\');
         $namespace = "";
@@ -184,6 +280,13 @@ class Loader
         return $fileName;
     }
 
+    /**
+     * Convert extent class name to real file path
+     *
+     * @param string $extentClass
+     * @param string $dirpath
+     * @return string
+     */
     public static function classToExtentPath($extentClass){
         $lastNsPos = strrpos($extentClass, '\\');
         $namespace = substr($extentClass, 0, $lastNsPos);
@@ -193,6 +296,12 @@ class Loader
         return $fileName;
     }
 
+    /**
+     * Register the autoload hook
+     *
+     * @param bool $autoload
+     * @return void
+     */
     public static function register($autoload=false){
         spl_autoload_register($autoload ?: 'think\\Loader::autoload', true, true);
     }

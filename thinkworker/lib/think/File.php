@@ -11,10 +11,35 @@ namespace think;
 
 class File
 {
-    protected $name, $filename, $filedata, $filesize, $filetype;
+    /**
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * @var string
+     */
+    protected $filename;
+
+    /**
+     * @var mixed
+     */
+    protected $filedata;
+
+    /**
+     * @var int
+     */
+    protected $filesize;
+
+    /**
+     * @var string
+     */
+    protected $filetype;
 
     /**
      * File constructor.
+     *
+     * @param array $fileinfo
      */
     public function __construct($fileinfo)
     {
@@ -25,26 +50,59 @@ class File
         $this->filetype = isset($fileinfo['file_type'])?$fileinfo['file_type']:null;
     }
 
+    /**
+     * Get the key for posting this file
+     *
+     * @return string
+     */
     public function getName(){
         return filter($this->name);
     }
 
+    /**
+     * Get the filename
+     *
+     * @return string
+     */
     public function getFilename(){
         return $this->filename;
     }
 
+    /**
+     * Get the content of the file
+     *
+     * @return mixed|null
+     */
     public function getData(){
         return $this->filedata;
     }
 
+    /**
+     * Get the size of the file
+     *
+     * @return int
+     */
     public function getSize(){
         return $this->filesize;
     }
 
+    /**
+     * Get the type of the file
+     *
+     * @return string
+     */
     public function getType(){
         return $this->filesize;
     }
 
+    /**
+     * Save the file from memory to file system
+     *
+     * @param string $directory
+     * @param string|null $filename
+     * @param bool $replace
+     * @return bool
+     */
     public function save($directory, $filename = null, $replace = true){
         $directory = rtrim(fix_slashes_in_path($directory), DS).DS;
         if(is_null($filename)){
@@ -57,6 +115,12 @@ class File
         return ($res!=false);
     }
 
+    /**
+     * Magical method for property getting
+     *
+     * @param string $name
+     * @return int|mixed|null|string
+     */
     public function __get($name)
     {
         switch ($name){

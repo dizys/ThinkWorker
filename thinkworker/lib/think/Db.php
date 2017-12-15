@@ -17,7 +17,9 @@ use Illuminate\Database\Query\Processors\Processor;
 
 class Db
 {
-
+    /**
+     * @var array
+     */
     protected static $configs = [
         'driver'    => 'mysql',
         'host'      => 'localhost',
@@ -29,6 +31,12 @@ class Db
         'prefix'    => '',
     ];
 
+    /**
+     * Database initialization
+     *
+     * @param array|null $configs
+     * @return void;
+     */
     public static function _init_by_worker_process($configs = null){
         global $TW_ENV_CAPSULE;
         if(!is_null($configs)){
@@ -597,6 +605,8 @@ class Db
         return $TW_ENV_CAPSULE->logging();
     }
 
+
+
     /**
      * Get the name of the connected database.
      *
@@ -733,6 +743,17 @@ class Db
     public static function transactionLevel(){
         global $TW_ENV_CAPSULE;
         return $TW_ENV_CAPSULE->transactionLevel();
+    }
+
+    /**
+     * Get the database manager instance.
+     *
+     * @return \Illuminate\Database\DatabaseManager
+     */
+    public function getDatabaseManager()
+    {
+        global $TW_ENV_CAPSULE;
+        return $TW_ENV_CAPSULE->getDatabaseManager();
     }
 
     /**

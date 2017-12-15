@@ -1,16 +1,20 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Dizy
- * Date: 2017/12/10
- * Time: 22:53
+ *  ThinkWorker - THINK AND WORK FAST
+ *  Copyright (c) 2017 http://thinkworker.cn All Rights Reserved.
+ *  Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+ *  Author: Dizy <derzart@gmail.com>
  */
 
 namespace think\server;
 
 
 use think\Config;
+use think\Db;
 use think\MainServer;
+use think\Redis;
+use think\Server;
+use think\Session;
 use think\task\TaskServer;
 use Workerman\Worker;
 
@@ -94,18 +98,48 @@ class Loader
         if($ret){
             return true;
         }
-        $ret = think_core_new_class("app\\".$singleServer);
+        $appRootNameSpace = Config::get("think.app_namespace");
+        $appRootNameSpace = is_null($appRootNameSpace)?"app":$appRootNameSpace;
+        $ret = think_core_new_class($appRootNameSpace."\\".$singleServer);
         if($ret){
             return true;
         }
         $serverSep = explode("\\", $singleServer);
         if(count($serverSep) == 2){
-            $ret = think_core_new_class("app\\".$serverSep[0]."\\server\\".$serverSep[1]);
+            $ret = think_core_new_class($appRootNameSpace."\\".$serverSep[0]."\\server\\".$serverSep[1]);
             if($ret){
                 return true;
             }
         }
         think_core_print_error("Can't find the single server referring to: ".$singleServer);
         return false;
+    }
+
+
+    public static function loadEssentials($object = null){
+        $load_db = true; $load_redis = true; $load_app = true; $load_session = true;
+        if(!is_null($object) && $object instanceof Server){
+            $server = new \ReflectionClass($object);
+            $load_db = think_core_get_protected_property($server, "load_db", $object);
+            $load_db = is_null($load_db)?true: $load_db;
+            $load_redis = think_core_get_protected_property($server, "load_redis", $object);
+            $load_redis = is_null($load_redis)?true: $load_redis;
+            $load_session = think_core_get_protected_property($server, "load_session", $object);
+            $load_session = is_null($load_session)?true: $load_session;
+            $load_app = think_core_get_protected_property($server, "load_app", $object);
+            $load_app = is_null($load_app)?true: $load_app;
+        }
+        if($load_db){
+            Db::_init_by_worker_process(Config::get(null, "database"));
+        }
+        if($load_redis){
+            Redis::_init(Config::get(null, "redis"));
+        }
+        if($load_session){
+            Session::_init(Config::get("session"));
+        }
+        if($load_app && is_file(APP_PATH . "app.php")){
+            require_once APP_PATH . "app.php";
+        }
     }
 }

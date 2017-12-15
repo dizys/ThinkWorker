@@ -1,22 +1,29 @@
 # ThinkWorker
-Run without Apache/Nginx/php-fpm! A PHP Framework based on Workerman to help build your website!
+Run without Apache/Nginx/php-fpm! A PHP Framework based on `Workerman` to help build your website! mailto: derzart@gmail.com QQ:529189858
 
-This is inspired by a lot of other excellent frameworks, namely ThinkPHP, Laravel, Express.Js ... 
+[中文文档](http://docs.thinkworker.cn/#/zh-cn/guide/essentials/)
 
-But what makes this different from ThinkPHP or Laravel is that: ThinkWorker runs without Apache or Nginx or PHP-fpm. Instead, it runs purely and stably on PHP socket connections, thanks to Workerman, which empowers it to preform much better.
+- Memory Resident and Multi-process: Load code once, and run stably and blazing fast on PHP socket connections with multiple processes. Based on `Workerman`.
+- Lazy autoload: Almose every class is autoloaded, and for sure, only once, then it stays in memory.
+- VHost Support: Multiple domain resolution supported and seperate routing rules can be set for each domain.
+- Flexible Routing Rules: Just like Laravel, ThinkPHP and others.
+- Db & Model: Using `Eloquent ORM`, from the famous `Laravel`.
+- View: Using `Smarty` engine as template engine, fast & simple.
+- Static Resource Server: everything in `public` directory is accessible.
+- of course `composer` is supported. `psr4`
+- yes, WE HAVE `Task Queue` BUILT INSIDE! File driver or Database driver is implemented so far. And they are all multi-process safe! Database driver supports distributed deployment.
+- Debug & Tracing: turn on debug mode, and you will have details and tracings for exceptions, request information and stuff...
 
-This project is still in progress moving forward to the very first usable version. Now, everything may be a little bad implemented or seldomly documented. But, I will keep up. :)
+Now ThinkWorker is still in the progress moving forward to a very first stable version. Please try out, play around and maybe test out some bugs and report them :) 
 
-Workerman Engine is in the directory (`thinkcore\lib\workerman`), and the uploaded one is for Windows. If you wanna run this on Linux, you can replace the content of this directory with the linux version of Workerman.
+If you have any questions, do sumbit an issue on Github :) I'll reply soon.
 
-View(Template Engine) is powered by `Smarty`.
-Model is powered by `Eloquent ORM` (from the famous Laravel)
+## Attention
+Workerman Engine is in the directory (`thinkworker\lib\workerman`), and the uploaded one is for Windows. If you wanna run this on Linux, you can replace the content of this directory with the linux version of Workerman.
 
 ## Very Quick Start
 Simply Run The Command: `php start.php start`
 Then open your browser, visit localhost!
 
 ## Now Progress
-version: 1.0.0 alpha
-
-[中文文档](http://docs.thinkworker.cn/#/zh-cn/guide/essentials/)
+version: `1.0.0 alpha`

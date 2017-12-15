@@ -14,9 +14,27 @@ use think\route\SubRoute;
 
 class Route
 {
+    /**
+     * @var array
+     */
     protected static $mapRules = [];
+
+    /**
+     * @var array
+     */
     protected static $mapCache = [];
+
+    /**
+     * @var int
+     */
     protected static $mapCacheSize = 1000;
+
+    /**
+     * Router initialization method
+     *
+     * @param array $rules
+     * @return void
+     */
     public static function _init($rules){
         self::$mapCacheSize = Config::get("think.routing_cache_size");
         self::$mapCacheSize = is_null(self::$mapCacheSize)?1000:self::$mapCacheSize;
@@ -39,6 +57,12 @@ class Route
         }
     }
 
+    /**
+     * Clear the routing cache for a specific hostname or all
+     *
+     * @param string|null $hostname
+     * @return void
+     */
     public static function clearCache($hostname = null){
         if(is_null($hostname)){
             self::$mapCache = [];
@@ -47,6 +71,14 @@ class Route
         }
     }
 
+    /**
+     * Add a routing rule or multiple rules
+     *
+     * @param string $hostname
+     * @param string|array $pattern
+     * @param string|array|null $rule
+     * @return void
+     */
     public static function add($hostname, $pattern, $rule = null){
         if(is_null($rule) && is_array($pattern)){
             foreach ($pattern as $key => $value){
@@ -62,6 +94,14 @@ class Route
         self::clearCache($hostname);
     }
 
+    /**
+     * Add one single rule
+     *
+     * @param string $hostname
+     * @param string $pattern
+     * @param string|array $rule
+     * @return void
+     */
     private static function addOne($hostname, $pattern, $rule){
         if(strpos($pattern, "@")===0 && is_array($rule) && count($rule) == 5){
             $rule = [$rule[0], $rule[1], $rule[4]];
@@ -73,26 +113,90 @@ class Route
         self::$mapRules[$hostname][$pattern] = $rule;
     }
 
+    /**
+     * Add one rule that applies to any request method
+     *
+     * @param string $hostname
+     * @param string $pattern
+     * @param string|callable $handler
+     * @param array|null $payloadCheck
+     * @param string|null $suffix
+     * @param bool|null $cache
+     * @return void
+     */
     public static function any($hostname, $pattern, $handler, $payloadCheck = null, $suffix = null, $cache = null){
         self::add($hostname, $pattern, [$handler, null, $payloadCheck, $suffix, $cache]);
     }
 
+    /**
+     * Add one rule that applies to GET method
+     *
+     * @param string $hostname
+     * @param string $pattern
+     * @param string|callable $handler
+     * @param array|null $payloadCheck
+     * @param string|null $suffix
+     * @param bool|null $cache
+     * @return void
+     */
     public static function get($hostname, $pattern, $handler, $payloadCheck = null, $suffix = null, $cache = null){
         self::add($hostname, $pattern, [$handler, 'GET', $payloadCheck, $suffix, $cache]);
     }
 
+    /**
+     * Add one rule that applies to POST method
+     *
+     * @param string $hostname
+     * @param string $pattern
+     * @param string|callable $handler
+     * @param array|null $payloadCheck
+     * @param string|null $suffix
+     * @param bool|null $cache
+     * @return void
+     */
     public static function post($hostname, $pattern, $handler, $payloadCheck = null, $suffix = null, $cache = null){
         self::add($hostname, $pattern, [$handler, 'POST', $payloadCheck, $suffix, $cache]);
     }
 
+    /**
+     * Add one rule that applies to PUT method
+     *
+     * @param string $hostname
+     * @param string $pattern
+     * @param string|callable $handler
+     * @param array|null $payloadCheck
+     * @param string|null $suffix
+     * @param bool|null $cache
+     * @return void
+     */
     public static function put($hostname, $pattern, $handler, $payloadCheck = null, $suffix = null, $cache = null){
         self::add($hostname, $pattern, [$handler, 'PUT', $payloadCheck, $suffix, $cache]);
     }
 
+    /**
+     * Add one rule that applies to DELETE method
+     *
+     * @param string $hostname
+     * @param string $pattern
+     * @param string|callable $handler
+     * @param array|null $payloadCheck
+     * @param string|null $suffix
+     * @param bool|null $cache
+     * @return void
+     */
     public static function delete($hostname, $pattern, $handler, $payloadCheck = null, $suffix = null, $cache = null){
         self::add($hostname, $pattern, [$handler, 'DELETE', $payloadCheck, $suffix, $cache]);
     }
 
+    /**
+     * Add group rules
+     *
+     * @param string $hostname
+     * @param mixed $prefix
+     * @param mixed $rules
+     * @param array $configs
+     * @return void
+     */
     public static function group($hostname, $prefix, $rules, $configs = []){
         $hostname = self::matchToVHost($hostname);
         if(!isset(self::$mapRules[$hostname])){
@@ -143,7 +247,15 @@ class Route
         self::clearCache($hostname);
     }
 
-    public static function match($req){
+    /**
+     * Match routing rule with Request and get controller reference name and info
+     *
+     * @param Request $req
+     * @return array
+     * @throws RouteNotFoundException
+     * @throws VHostNotFoundException
+     */
+    public static function match(Request $req){
         if(isset(self::$mapCache[$req->hostname][$req->uri][$req->method])){
             //Hit routing cache
             return self::$mapCache[$req->hostname][$req->uri][$req->method];
@@ -167,6 +279,12 @@ class Route
         return ['controller' => $controller, 'payload' => $payload];
     }
 
+    /**
+     * Keep cache size still
+     *
+     * @param string $hostname
+     * @return void
+     */
     private static function maintainCacheSize($hostname){
         if(self::$mapCacheSize != false){
             if(isset(self::$mapCache[$hostname]) && sizeof(self::$mapCache[$hostname]) > self::$mapCacheSize){
@@ -178,7 +296,12 @@ class Route
         }
     }
 
-
+    /**
+     * Matchvhost rule and get rule pattern
+     *
+     * @param string $hostname
+     * @return string
+     */
     private static function matchToVHost($hostname){
         foreach (self::$mapRules as $host=>$value){
             $names = explode(",", $host);
@@ -193,6 +316,12 @@ class Route
         return $hostname;
     }
 
+    /**
+     * Match vhost rule and get rule
+     *
+     * @param string $hostname
+     * @return bool|mixed
+     */
     private static function matchVHost($hostname){
         foreach (self::$mapRules as $host=>$rule){
             $names = explode(",", $host);
@@ -205,6 +334,17 @@ class Route
         return false;
     }
 
+    /**
+     * Match rule pattern with Request
+     *
+     * @param mixed $rules
+     * @param Request $req
+     * @param array &$payload
+     * @param bool &$cache
+     * @param string|null $prefix
+     * @param string|null $uri
+     * @return array|bool
+     */
     private static function matchPath($rules, $req, &$payload, &$cache, $prefix = null, $uri = null){
         if(is_null($uri)){
             $uri = $req->uri;

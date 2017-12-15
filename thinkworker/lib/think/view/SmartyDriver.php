@@ -148,12 +148,16 @@ class SmartyDriver implements Driver
         return $tpl_source;
     }
 
-    public function registerFunction($functionName, $asName = null){
+    public function registerFunction( $callable, $asName = null){
         if(is_null($asName)){
-            $asName = $functionName;
+            if(is_string($callable)){
+                $asName = $callable;
+            }else if(is_array($callable) && isset($callable[1]) && is_string($callable[1])){
+                $asName = $callable[1];
+            }
         }
         if(is_string($asName)){
-            $this->smarty->registerPlugin("function",$asName, $functionName, $this->function_cacheable);
+            $this->smarty->registerPlugin("function",$asName, $callable, $this->function_cacheable);
         }
     }
 

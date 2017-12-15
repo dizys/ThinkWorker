@@ -6,6 +6,8 @@
  *  Author: Dizy <derzart@gmail.com>
  */
 
+use think\Config;
+
 if(!function_exists("wildcardMatch")){
     function wildcardMatch($pattern, $value)
     {
@@ -23,7 +25,7 @@ if(!function_exists("describeException")){
         $head = "";
         try {
             $eRef = new ReflectionClass($e);
-            $head = "[".$eRef."] ";
+            $head = "[".$eRef->getShortName()."] ";
         }catch (Throwable $e){
 
         }
@@ -42,11 +44,11 @@ if(!function_exists("think_controller_analyze")) {
     function think_controller_analyze($controller)
     {
         $controller = rtrim($controller, "/");
-        $appNameSpace = config('think.default_app');
+        $appNameSpace = Config::get('think.default_app');
         $appNameSpace = is_null($appNameSpace)?"index":$appNameSpace;
-        $controllerNameSpace = config('think.default_controller');
+        $controllerNameSpace = Config::get('think.default_controller');
         $controllerNameSpace = is_null($controllerNameSpace)?"Index":$controllerNameSpace;
-        $methodName = config('think.default_method');
+        $methodName = Config::get('think.default_method');
         $methodName = is_null($methodName)?"index":$methodName;
 
         $controllerSep = explode("/", $controller);
@@ -79,7 +81,7 @@ if(!function_exists("think_controller_analyze")) {
         }else{
             $controllerNameSpace[0] = strtoupper($controllerNameSpace[0]);
         }
-        $appRootNameSpace = config("app_namespace");
+        $appRootNameSpace = Config::get("think.app_namespace");
         $appRootNameSpace = is_null($appRootNameSpace)?"app":$appRootNameSpace;
         $classFullName = $appRootNameSpace."\\".$appNameSpace."\\controller\\".$controllerNameSpace;
         return (object)[
@@ -445,6 +447,23 @@ if(!function_exists("think_core_new_driver")){
         }
         $driverIns = new $driver();
         return $driverIns;
+    }
+}
+
+if(!function_exists("think_core_get_protected_property")){
+    function think_core_get_protected_property(ReflectionClass $reflectionClass, $propertyName, $instance = null){
+        $propertyObj = $reflectionClass->getProperty($propertyName);
+        if(is_null($propertyObj)){
+            return null;
+        }
+        $restore = true;
+        if(!$propertyObj->isPublic()){
+            $propertyObj->setAccessible(true);
+            $restore = false;
+        }
+        $value = $propertyObj->getValue($instance);
+        $propertyObj->setAccessible($restore);
+        return $value;
     }
 }
 

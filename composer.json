@@ -14,8 +14,8 @@
         "email": "derzart@gmail.com"
     }],
     "require": {
-        "php": ">=5.4.0",
-        "illuminate/database": "*"
+        "illuminate/database": "*",
+        "illuminate/redis": "5.5.x-dev"
     },
     "autoload": {
         "psr-4": {

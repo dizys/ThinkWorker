@@ -11,28 +11,12 @@
  *  Database Settings
  */
 return [
-    'default'=>[
-        'driver'    => 'mysql',
-        'host' => 'localhost',
-        'database'  => 'mvctest',
-        'username'  => 'root',
-        'password'  => 'root',
-        'charset'   => 'utf8',
-        'collation' => 'utf8_unicode_ci',
-        'prefix'    => '',
-    ],
-    'redis' => [
-        'client' => 'predis',
-
-        'clusters' => [
-            'default' => [
-                [
-                    'host' => 'localhost',
-                    'password' => 'root',
-                    'port' => 6379,
-                    'database' => 0,
-                ],
-            ],
-        ],
-    ]
+    'driver'    => 'mysql',
+    'host' => 'localhost',
+    'database'  => 'mvctest',
+    'username'  => 'root',
+    'password'  => 'root',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => ''
 ];

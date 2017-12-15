@@ -19,6 +19,6 @@ interface Driver
     public function replace($name, $value = null);
     public function outReplace($name, $value = null);
     public function config($name, $value);
-    public function registerFunction($functionName, $asName = null);
+    public function registerFunction($callable, $asName = null);
     public function getInstance();
 }

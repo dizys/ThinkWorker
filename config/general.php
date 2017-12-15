@@ -108,9 +108,9 @@ return [
      *  Task Queue System Settings
      */
     'task' => [
-        'enable' => false,
-        'server_driver' => 'file',
-        'client_driver' => 'file',
+        'enable' => true,
+        'server_driver' => 'db',
+        'client_driver' => 'db',
         'port' => 2073,
         'process_num' => 10,
         'default_max_try_times' => 4,

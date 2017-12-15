@@ -88,7 +88,7 @@ class HttpException extends \Exception
                 break;
             }
             $file = think_core_form_tracing_table_filepath($trace);
-            $args = think_core_form_tracing_table_args($trace);
+            $args = think_core_charset_auto_revert(think_core_form_tracing_table_args($trace));
             $call = think_core_form_tracing_table_call($trace);
             $tableHtml .= "<tr><td class=\"debug-tracing-table-num\">".$count."</td><td class=\"debug-tracing-table-filepath\">".$file."</td><td class=\"debug-tracing-table-line\">".(isset($trace['line'])?$trace['line']:" - ")."</td><td class=\"debug-tracing-table-call\">".$call."(".$args.")</td></tr>";
             $count++;
