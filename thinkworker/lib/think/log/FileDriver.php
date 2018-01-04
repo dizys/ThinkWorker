@@ -11,11 +11,23 @@ namespace think\log;
 
 class FileDriver implements Driver
 {
+    /**
+     * FileDriver init method
+     *
+     * @param array $config
+     * @return void
+     */
     public function init($config)
     {
         // TODO: Implement init() method.
     }
 
+    /**
+     * FileDriver write method
+     *
+     * @param string $body
+     * @return bool
+     */
     public function write($body)
     {
         // TODO: Implement write() method.

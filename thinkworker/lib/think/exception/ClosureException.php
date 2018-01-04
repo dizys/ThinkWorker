@@ -11,6 +11,12 @@ namespace think\exception;
 
 class ClosureException extends HttpException
 {
+    /**
+     * ClosureException constructor.
+     *
+     * @param \Exception $origin
+     * @param string $message
+     */
     public function __construct($origin, $message = "")
     {
         if(!is_null($origin) && is_object($origin)){
@@ -24,6 +30,11 @@ class ClosureException extends HttpException
         }
     }
 
+    /**
+     * Get Http Return in Debug Mode
+     *
+     * @return string
+     */
     private function getDebugHttpBody(){
         return $this->loadTemplate("TracingPage", [
             'title' => think_core_lang("tracing page closure process error"),
@@ -45,6 +56,11 @@ class ClosureException extends HttpException
         ]);
     }
 
+    /**
+     * Get Http Return in Production Mode
+     *
+     * @return string
+     */
     private function getProHttpBody(){
         return $this->loadTemplate("ErrorPage", [
             'title'=>think_core_lang('page error title'),

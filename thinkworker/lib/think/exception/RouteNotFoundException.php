@@ -11,7 +11,18 @@ namespace think\exception;
 
 class RouteNotFoundException extends HttpException
 {
+    /**
+     * @var string
+     */
     protected $uri;
+
+    /**
+     * RouteNotFoundException constructor.
+     *
+     * @param \Exception $origin
+     * @param string $uri
+     * @param string $message
+     */
     public function __construct($origin, $uri, $message = "")
     {
         $message = "Uri Not Matched: ".$uri;
@@ -24,6 +35,11 @@ class RouteNotFoundException extends HttpException
         }
     }
 
+    /**
+     * Get Http Return in Debug Mode
+     *
+     * @return string
+     */
     private function getDebugHttpBody(){
         return $this->loadTemplate("TracingPage", [
             'title' => think_core_lang("tracing page route not found"),
@@ -45,6 +61,11 @@ class RouteNotFoundException extends HttpException
         ]);
     }
 
+    /**
+     * Get Http Return in Production Mode
+     *
+     * @return string
+     */
     private function getProHttpBody(){
         return $this->loadTemplate("ErrorPage", [
             'title'=>think_core_lang("page not found title"),

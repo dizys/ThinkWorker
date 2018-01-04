@@ -11,7 +11,17 @@ namespace think\exception;
 
 class SyntaxParseException extends HttpException
 {
+    /**
+     * @var string
+     */
     protected $filepath;
+
+    /**
+     * SyntaxParseException constructor.
+     *
+     * @param string $filepath
+     * @param string $message
+     */
     public function __construct($filepath, $message = "")
     {
         $message = "Syntax Parse Error: ".$filepath."\n".$message;
@@ -24,7 +34,11 @@ class SyntaxParseException extends HttpException
         }
     }
 
-
+    /**
+     * Get Http Return in Debug Mode
+     *
+     * @return string
+     */
     private function getDebugHttpBody(){
         return $this->loadTemplate("TracingPage", [
             'title' => think_core_lang("tracing page syntax parse error"),
@@ -46,6 +60,11 @@ class SyntaxParseException extends HttpException
         ]);
     }
 
+    /**
+     * Get Http Return in Production Mode
+     *
+     * @return string
+     */
     private function getProHttpBody(){
         return $this->loadTemplate("ErrorPage", [
             'title'=>think_core_lang('page error title'),

@@ -8,5 +8,5 @@
 
 /** Routing rules for localhost */
 return [
-    '/' => 'index/Index/index',
+    '/' => "index/Index/index"
 ];

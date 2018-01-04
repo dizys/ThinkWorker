@@ -13,7 +13,7 @@
 return [
     'driver'    => 'mysql',
     'host' => 'localhost',
-    'database'  => 'mvctest',
+    'database'  => 'test',
     'username'  => 'root',
     'password'  => 'root',
     'charset'   => 'utf8',

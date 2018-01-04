@@ -125,7 +125,7 @@ class Request
         foreach ($data['files'] as $fileinfo){
             array_push($this->files, new File($fileinfo));
         }
-        $this->hostname = $this->headers['HTTP_HOST'];
+        $this->hostname = think_core_clean_hostname($this->headers['HTTP_HOST']);
         $this->fullRequestUri = $this->headers['REQUEST_URI'];
         $this->requestUri = $this->headers['REQUEST_URI'];
         if(!!strpos($this->requestUri,"?")){

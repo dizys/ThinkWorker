@@ -172,6 +172,17 @@ if(!function_exists("think_core_form_tracing_table_filepath")) {
     }
 }
 
+if(!function_exists("think_core_clean_hostname")) {
+    function think_core_clean_hostname($hostname)
+    {
+        $pos = strpos($hostname, ":");
+        if($pos===false){
+            return $hostname;
+        }
+        return substr($hostname, 0, $pos);
+    }
+}
+
 if(!function_exists("think_core_form_tracing_table_filepath")) {
     function think_core_form_tracing_table_filepath($trace)
     {
@@ -207,6 +218,22 @@ if(!function_exists("think_core_get_all_extensions")) {
     {
         $loaded_extensions=get_loaded_extensions();
         return join(", ",$loaded_extensions);
+    }
+}
+
+function think_core_rtrim($text, $niddle){
+    $text = trim($text);
+    $len = strlen($text);
+    $nlen = strlen($niddle);
+    $pos = strrpos($text, $niddle);
+    if($pos!==false){
+        if($len-$pos == $nlen){
+            return substr($text, 0, -$nlen);
+        }else{
+            return $text;
+        }
+    }else{
+        return $text;
     }
 }
 
@@ -289,7 +316,7 @@ if(!function_exists("think_core_route_basic_path_match")) {
         $pattern = rtrim($pattern, "/")."/";
         if(substr($uri, -strlen(".".$suffix)) == ".".$suffix){
             if(substr($uri, -strlen(".".$suffix) -1, 1) != "/"){
-                $uri = rtrim($uri, ".".$suffix);
+                $uri = think_core_rtrim($uri, ".".$suffix);
             }
         }
         $uri = rtrim(merge_slashes($uri), "/")."/";
@@ -348,7 +375,7 @@ if(!function_exists("think_core_route_vars_path_match")) {
         $pattern = rtrim($pattern, "/")."/";
         if(substr($uri, -strlen(".".$suffix)) == ".".$suffix){
             if(substr($uri, -strlen(".".$suffix) -1, 1) != "/"){
-                $uri = rtrim($uri, ".".$suffix);
+                $uri = think_core_rtrim($uri, ".".$suffix);
             }
         }
         $uri = rtrim(merge_slashes($uri), "/")."/";

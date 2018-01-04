@@ -11,9 +11,22 @@ namespace think\route;
 
 class SubRoute
 {
+    /**
+     * @var array
+     */
     protected $mapRules = [];
+
+    /**
+     * @var null|string
+     */
     protected $anyDefault = null;
+
+    /**
+     * @var null|string
+     */
     protected $suffix = null;
+
+
     protected $cache = null;
     public function __construct($anyDefault = null, $suffix = null, $cache = null)
     {

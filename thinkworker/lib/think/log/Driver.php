@@ -11,6 +11,20 @@ namespace think\log;
 
 interface Driver
 {
-    public function write($body);
+
+    /**
+     * Logger Driver Init Interface method
+     *
+     * @param $config
+     * @return mixed
+     */
     public function init($config);
+
+    /**
+     * Logger Driver Write Interface method
+     *
+     * @param $body
+     * @return mixed
+     */
+    public function write($body);
 }

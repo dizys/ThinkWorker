@@ -51,7 +51,7 @@ class Loader
         $serverFileLen = strlen($serverFile);
         $lastDsPos = strrpos($serverFile, DS);
         $serverName = substr($serverFile, $lastDsPos + 1);
-        $serverName = rtrim($serverName, EXT);
+        $serverName = think_core_rtrim($serverName, EXT);
         $secLastDsPos = strrpos($serverFile, DS, -($serverFileLen - $lastDsPos)-1);
         $thrLastDsPos = strrpos($serverFile, DS, -($serverFileLen-$secLastDsPos)-1);
         $appName = substr($serverFile, $thrLastDsPos+1, $secLastDsPos-$thrLastDsPos-1);

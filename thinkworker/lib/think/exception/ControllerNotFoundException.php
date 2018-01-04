@@ -11,7 +11,18 @@ namespace think\exception;
 
 class ControllerNotFoundException extends HttpException
 {
+    /**
+     * @var string
+     */
     protected $controller;
+
+    /**
+     * ControllerNotFoundException constructor.
+     *
+     * @param \Exception $origin
+     * @param string $controller
+     * @param string $message
+     */
     public function __construct($origin, $controller, $message = "")
     {
         $message = "Controller Not Found: ".$controller;
@@ -24,6 +35,11 @@ class ControllerNotFoundException extends HttpException
         }
     }
 
+    /**
+     * Get Http Return in Debug Mode
+     *
+     * @return string
+     */
     private function getDebugHttpBody(){
         return $this->loadTemplate("TracingPage", [
             'title' => think_core_lang("tracing page controller not found"),
@@ -45,6 +61,11 @@ class ControllerNotFoundException extends HttpException
         ]);
     }
 
+    /**
+     * Get Http Return in Production Mode
+     *
+     * @return string
+     */
     private function getProHttpBody(){
         return $this->loadTemplate("ErrorPage", [
             'title'=>think_core_lang("page not found title"),

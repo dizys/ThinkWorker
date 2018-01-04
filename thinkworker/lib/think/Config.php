@@ -23,7 +23,7 @@ class Config
         {
             $lastDsPos = strrpos($configFile, DS);
             $rangeName = substr($configFile, $lastDsPos + 1);
-            $rangeName = strtolower(rtrim($rangeName, CONF_EXT));
+            $rangeName = strtolower(think_core_rtrim($rangeName, CONF_EXT));
             self::$config[$rangeName] = include($configFile);
         }
     }

@@ -11,6 +11,10 @@ namespace think\exception;
 
 class VHostNotFoundException extends HttpException
 {
+    /**
+     * VHostNotFoundException constructor.
+     * @param string $message
+     */
     public function __construct($message = "")
     {
         parent::__construct(400, $message, false);

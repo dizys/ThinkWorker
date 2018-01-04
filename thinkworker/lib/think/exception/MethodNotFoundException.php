@@ -11,7 +11,24 @@ namespace think\exception;
 
 class MethodNotFoundException extends HttpException
 {
-    protected $controller, $method;
+    /**
+     * @var string
+     */
+    protected $controller;
+
+    /**
+     * @var bool
+     */
+    protected $method;
+
+    /**
+     * MethodNotFoundException constructor.
+     *
+     * @param \Exception $origin
+     * @param string $controller
+     * @param bool $method
+     * @param string $message
+     */
     public function __construct($origin, $controller, $method, $message = "")
     {
         $message = "Method Not Found: ".$controller."->".$method."()" ;
@@ -25,7 +42,11 @@ class MethodNotFoundException extends HttpException
         }
     }
 
-
+    /**
+     * Get Http Return in Debug Mode
+     *
+     * @return string
+     */
     private function getDebugHttpBody(){
         return $this->loadTemplate("TracingPage", [
             'title' => think_core_lang("tracing page method not found"),
@@ -47,6 +68,11 @@ class MethodNotFoundException extends HttpException
         ]);
     }
 
+    /**
+     * Get Http Return in Production Mode
+     *
+     * @return string
+     */
     private function getProHttpBody(){
         return $this->loadTemplate("ErrorPage", [
             'title'=>think_core_lang("page not found title"),

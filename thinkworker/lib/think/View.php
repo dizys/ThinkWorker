@@ -45,7 +45,7 @@ class View
         $this->enginePrepare();
         if(is_null($viewfile) || is_array($viewfile)){
             if(!strpos($appName, "@")){
-                $viewfile = rtrim($appName, ".".$this->fileExt).".".$this->fileExt;
+                $viewfile = think_core_rtrim($appName, ".".$this->fileExt).".".$this->fileExt;
                 $viewfile = fix_slashes_in_path($viewfile);
                 if(is_file($viewfile)){
                     $this->filePath = $viewfile;
@@ -116,7 +116,7 @@ class View
      * @return string
      */
     private function parseTemplateFilepath($appName, $viewfile){
-        $viewfile = rtrim($viewfile, ".".$this->fileExt);
+        $viewfile = think_core_rtrim($viewfile, ".".$this->fileExt);
         return fix_slashes_in_path(APP_PATH.$appName.DS."view".DS.$viewfile.".".$this->fileExt);
     }
 

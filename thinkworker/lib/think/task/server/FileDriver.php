@@ -228,7 +228,7 @@ class FileDriver implements Driver
         if(!$ret){
             return false;
         }
-        $filename = rtrim($filename, ".tsk");
+        $filename = think_core_rtrim($filename, ".tsk");
         return $filename;
     }
 }

@@ -144,7 +144,7 @@ class Db
     public static function query()
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->query();
+        return $TW_ENV_CAPSULE::query();
     }
 
     /**
@@ -158,7 +158,7 @@ class Db
     public static function selectOne($query, $bindings = [], $useReadPdo = true)
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->selectOne($query, $bindings, $useReadPdo);
+        return $TW_ENV_CAPSULE::selectOne($query, $bindings, $useReadPdo);
     }
 
     /**
@@ -171,7 +171,7 @@ class Db
     public static function selectFromWriteConnection($query, $bindings = [])
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->selectFromWriteConnection($query, $bindings);
+        return $TW_ENV_CAPSULE::selectFromWriteConnection($query, $bindings);
     }
 
     /**
@@ -185,7 +185,7 @@ class Db
     public static function select($query, $bindings = [], $useReadPdo = true)
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->select($query, $bindings, $useReadPdo);
+        return $TW_ENV_CAPSULE::select($query, $bindings, $useReadPdo);
     }
 
     /**
@@ -199,7 +199,7 @@ class Db
     public static function cursor($query, $bindings = [], $useReadPdo = true)
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->cursor($query, $bindings, $useReadPdo);
+        return $TW_ENV_CAPSULE->connection()->cursor($query, $bindings, $useReadPdo);
     }
 
     /**
@@ -212,7 +212,7 @@ class Db
     public static function insert($query, $bindings = [])
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->insert($query, $bindings);
+        return $TW_ENV_CAPSULE->connection()->insert($query, $bindings);
     }
 
     /**
@@ -225,7 +225,7 @@ class Db
     public static function update($query, $bindings = [])
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->update($query, $bindings);
+        return $TW_ENV_CAPSULE::update($query, $bindings);
     }
 
     /**
@@ -238,7 +238,7 @@ class Db
     public static function delete($query, $bindings = [])
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->delete($query, $bindings);
+        return $TW_ENV_CAPSULE::delete($query, $bindings);
     }
 
     /**
@@ -251,7 +251,7 @@ class Db
     public static function statement($query, $bindings = [])
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->statement($query, $bindings);
+        return $TW_ENV_CAPSULE::statement($query, $bindings);
     }
 
     /**
@@ -264,7 +264,7 @@ class Db
     public static function affectingStatement($query, $bindings = [])
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->affectingStatement($query, $bindings);
+        return $TW_ENV_CAPSULE::affectingStatement($query, $bindings);
     }
 
     /**
@@ -276,7 +276,7 @@ class Db
     public static function unprepared($query)
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->unprepared($query);
+        return $TW_ENV_CAPSULE::unprepared($query);
     }
 
     /**
@@ -288,7 +288,7 @@ class Db
     public static function pretend(Closure $callback)
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->pretend($callback);
+        return $TW_ENV_CAPSULE::pretend($callback);
     }
 
     /**
@@ -301,7 +301,7 @@ class Db
     public static function bindValues($statement, $bindings)
     {
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->bindValues($statement, $bindings);
+        $TW_ENV_CAPSULE::bindValues($statement, $bindings);
     }
 
     /**
@@ -313,7 +313,7 @@ class Db
     public static function prepareBindings(array $bindings)
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->prepareBindings($bindings);
+        return $TW_ENV_CAPSULE::prepareBindings($bindings);
     }
 
     /**
@@ -327,7 +327,7 @@ class Db
     public static function logQuery($query, $bindings, $time = null)
     {
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->logQuery($query, $bindings, $time);
+        $TW_ENV_CAPSULE::logQuery($query, $bindings, $time);
     }
 
     /**
@@ -340,7 +340,7 @@ class Db
     public static function reconnect()
     {
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->reconnect();
+        $TW_ENV_CAPSULE::reconnect();
     }
 
     /**
@@ -351,7 +351,7 @@ class Db
     public static function disconnect()
     {
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->disconnect();
+        $TW_ENV_CAPSULE::disconnect();
     }
 
     /**
@@ -363,7 +363,7 @@ class Db
     public static function raw($value)
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->raw($value);
+        return $TW_ENV_CAPSULE::raw($value);
     }
 
     /**
@@ -375,7 +375,7 @@ class Db
     public static function recordsHaveBeenModified($value = true)
     {
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->recordsHaveBeenModified($value);
+        $TW_ENV_CAPSULE::recordsHaveBeenModified($value);
     }
 
     /**
@@ -386,7 +386,7 @@ class Db
     public static function getPdo()
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->getPdo();
+        return $TW_ENV_CAPSULE::getPdo();
     }
 
     /**
@@ -397,7 +397,7 @@ class Db
     public static function getReadPdo()
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->getReadPdo();
+        return $TW_ENV_CAPSULE::getReadPdo();
     }
 
     /**
@@ -409,7 +409,7 @@ class Db
     public static function setPdo($pdo)
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->setPdo($pdo);
+        return $TW_ENV_CAPSULE::setPdo($pdo);
     }
 
     /**
@@ -421,7 +421,7 @@ class Db
     public static function setReadPdo($pdo)
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->setReadPdo($pdo);
+        return $TW_ENV_CAPSULE::setReadPdo($pdo);
     }
 
     /**
@@ -433,7 +433,7 @@ class Db
     public static function setReconnector(callable $reconnector)
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->setReconnector($reconnector);
+        return $TW_ENV_CAPSULE::setReconnector($reconnector);
     }
 
     /**
@@ -444,7 +444,7 @@ class Db
     public static function getName()
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->getName();
+        return $TW_ENV_CAPSULE::getName();
     }
 
     /**
@@ -456,7 +456,7 @@ class Db
     public static function getConfig($option = null)
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->getConfig($option);
+        return $TW_ENV_CAPSULE::getConfig($option);
     }
 
     /**
@@ -467,7 +467,7 @@ class Db
     public static function getDriverName()
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->getDriverName();
+        return $TW_ENV_CAPSULE::getDriverName();
     }
 
     /**
@@ -478,7 +478,7 @@ class Db
     public static function getQueryGrammar()
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->getQueryGrammar();
+        return $TW_ENV_CAPSULE::getQueryGrammar();
     }
 
     /**
@@ -490,7 +490,7 @@ class Db
     public static function setQueryGrammar(\Illuminate\Database\Query\Grammars\Grammar $grammar)
     {
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->setQueryGrammar($grammar);
+        $TW_ENV_CAPSULE::setQueryGrammar($grammar);
     }
 
     /**
@@ -501,7 +501,7 @@ class Db
     public static function getSchemaGrammar()
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->getSchemaGrammar();
+        return $TW_ENV_CAPSULE::getSchemaGrammar();
     }
 
     /**
@@ -513,7 +513,7 @@ class Db
     public static function setSchemaGrammar(\Illuminate\Database\Schema\Grammars\Grammar $grammar)
     {
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->setSchemaGrammar();
+        $TW_ENV_CAPSULE::setSchemaGrammar();
     }
 
     /**
@@ -524,7 +524,7 @@ class Db
     public static function getPostProcessor()
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->getPostProcessor();
+        return $TW_ENV_CAPSULE::getPostProcessor();
     }
 
     /**
@@ -536,7 +536,7 @@ class Db
     public static function setPostProcessor(Processor $processor)
     {
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->setPostProcessor($processor);
+        $TW_ENV_CAPSULE::setPostProcessor($processor);
     }
 
     /**
@@ -547,7 +547,7 @@ class Db
     public static function pretending()
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->pretending();
+        return $TW_ENV_CAPSULE::pretending();
     }
 
     /**
@@ -558,7 +558,7 @@ class Db
     public static function getQueryLog()
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->getQueryLog();
+        return $TW_ENV_CAPSULE::getQueryLog();
     }
 
     /**
@@ -569,7 +569,7 @@ class Db
     public static function flushQueryLog()
     {
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->flushQueryLog();
+        $TW_ENV_CAPSULE::flushQueryLog();
     }
 
     /**
@@ -580,7 +580,7 @@ class Db
     public static function enableQueryLog()
     {
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->enableQueryLog();
+        $TW_ENV_CAPSULE::enableQueryLog();
     }
 
     /**
@@ -591,7 +591,7 @@ class Db
     public static function disableQueryLog()
     {
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->disableQueryLog();
+        $TW_ENV_CAPSULE::disableQueryLog();
     }
 
     /**
@@ -602,7 +602,7 @@ class Db
     public static function logging()
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->logging();
+        return $TW_ENV_CAPSULE::logging();
     }
 
 
@@ -615,7 +615,7 @@ class Db
     public static function getDatabaseName()
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->getDatabaseName();
+        return $TW_ENV_CAPSULE::getDatabaseName();
     }
 
     /**
@@ -627,7 +627,7 @@ class Db
     public static function setDatabaseName($database)
     {
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->setDatabaseName($database);
+        $TW_ENV_CAPSULE::setDatabaseName($database);
     }
 
     /**
@@ -638,7 +638,7 @@ class Db
     public static function getTablePrefix()
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->getTablePrefix();
+        return $TW_ENV_CAPSULE::getTablePrefix();
     }
 
     /**
@@ -650,7 +650,7 @@ class Db
     public static function setTablePrefix($prefix)
     {
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->setTablePrefix($prefix);
+        $TW_ENV_CAPSULE::setTablePrefix($prefix);
     }
 
     /**
@@ -662,7 +662,7 @@ class Db
     public static function withTablePrefix(Grammar $grammar)
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->withTablePrefix($grammar);
+        return $TW_ENV_CAPSULE::withTablePrefix($grammar);
     }
 
     /**
@@ -675,7 +675,7 @@ class Db
     public static function resolverFor($driver, Closure $callback)
     {
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->resolverFor($driver, $callback);
+        $TW_ENV_CAPSULE::resolverFor($driver, $callback);
     }
 
     /**
@@ -687,7 +687,7 @@ class Db
     public static function getResolver($driver)
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->getResolver($driver);
+        return $TW_ENV_CAPSULE::getResolver($driver);
     }
 
 
@@ -702,7 +702,7 @@ class Db
      */
     public static function transaction(Closure $callback, $attempts = 1){
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->transaction($callback, $attempts);
+        return $TW_ENV_CAPSULE::transaction($callback, $attempts);
     }
 
     /**
@@ -712,7 +712,7 @@ class Db
      */
     public static function beginTransaction(){
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->beginTransaction();
+        $TW_ENV_CAPSULE::beginTransaction();
     }
 
     /**
@@ -722,7 +722,7 @@ class Db
      */
     public static function commit(){
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->commit();
+        $TW_ENV_CAPSULE::commit();
     }
 
     /**
@@ -732,7 +732,7 @@ class Db
      */
     public static function rollBack(){
         global $TW_ENV_CAPSULE;
-        $TW_ENV_CAPSULE->rollBack();
+        $TW_ENV_CAPSULE::rollBack();
     }
 
     /**
@@ -742,7 +742,7 @@ class Db
      */
     public static function transactionLevel(){
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->transactionLevel();
+        return $TW_ENV_CAPSULE::transactionLevel();
     }
 
     /**
@@ -753,7 +753,7 @@ class Db
     public function getDatabaseManager()
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->getDatabaseManager();
+        return $TW_ENV_CAPSULE::getDatabaseManager();
     }
 
     /**
@@ -766,6 +766,6 @@ class Db
     public static function __callStatic($method, $parameters)
     {
         global $TW_ENV_CAPSULE;
-        return $TW_ENV_CAPSULE->$method(...$parameters);
+        return $TW_ENV_CAPSULE->connection()->$method(...$parameters);
     }
 }

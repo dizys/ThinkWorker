@@ -53,7 +53,7 @@ return [
         'xml_item_node' => 'item',
         'xml_item_key'  => 'id',
 
-        'enable_servers' => true,
+        'enable_servers' => false,
     ],
 
     /**
@@ -108,7 +108,7 @@ return [
      *  Task Queue System Settings
      */
     'task' => [
-        'enable' => true,
+        'enable' => false,
         'server_driver' => 'db',
         'client_driver' => 'db',
         'port' => 2073,

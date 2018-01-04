@@ -12,7 +12,19 @@ namespace think\exception;
 
 class ControllerException extends HttpException
 {
+    /**
+     * @var string
+     */
     protected $controller, $method;
+
+    /**
+     * ControllerException constructor.
+     *
+     * @param \Exception $origin
+     * @param string $controller
+     * @param bool $method
+     * @param string $message
+     */
     public function __construct($origin, $controller, $method, $message = "")
     {
         if(!is_null($origin) && is_object($origin)){
@@ -28,6 +40,11 @@ class ControllerException extends HttpException
         }
     }
 
+    /**
+     * Get Http Return in Debug Mode
+     *
+     * @return string
+     */
     private function getDebugHttpBody(){
         return $this->loadTemplate("TracingPage", [
             'title' => think_core_lang("tracing page controller process error"),
@@ -49,6 +66,11 @@ class ControllerException extends HttpException
         ]);
     }
 
+    /**
+     * Get Http Return in Production Mode
+     *
+     * @return string
+     */
     private function getProHttpBody(){
         return $this->loadTemplate("ErrorPage", [
             'title'=>think_core_lang('page error title'),

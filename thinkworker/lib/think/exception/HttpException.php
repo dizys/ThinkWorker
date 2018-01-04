@@ -14,8 +14,34 @@ use Workerman\Worker;
 
 class HttpException extends \Exception
 {
-    private $debugOnly, $httpBody="", $statusCode = 400;
+    /**
+     * @var bool
+     */
+    private $debugOnly;
+
+    /**
+     * @var string
+     */
+    private $httpBody="";
+
+    /**
+     * @var int
+     */
+    private $statusCode = 400;
+
+    /**
+     * @var null|\Exception
+     */
     protected $origin = null;
+
+    /**
+     * HttpException constructor.
+     *
+     * @param string $statusCode
+     * @param string $message
+     * @param bool $debugOnly
+     * @param \Exception|null $origin
+     */
     public function __construct($statusCode, $message = "", $debugOnly = true, $origin = null)
     {
         $this->debugOnly = $debugOnly;
@@ -25,26 +51,60 @@ class HttpException extends \Exception
         parent::__construct($message, 0, null);
     }
 
+    /**
+     * Set original exception for tracing
+     *
+     * @param \Exception $e
+     * @return void
+     */
     public function setOrigin($e){
         $this->origin = $e;
     }
 
+    /**
+     * Set Http return
+     *
+     * @param string $content
+     * @return void
+     */
     public function setHttpBody($content){
         $this->httpBody = $content;
     }
 
+    /**
+     * Get Http return content
+     *
+     * @return string
+     */
     public function getHttpBody(){
         return $this->httpBody;
     }
 
+    /**
+     * Get status code
+     *
+     * @return int
+     */
     public function getStatusCode(){
         return $this->statusCode;
     }
 
+    /**
+     * Whether this exception is detailed in debug mode only
+     *
+     * @return bool
+     */
     public function isDebugOnly(){
         return $this->debugOnly;
     }
 
+    /**
+     * Load core template file content
+     *
+     * @param string $template
+     * @param array $vars
+     * @return string
+     */
     public function loadTemplate($template, $vars = []){
         $template = file_get_contents(THINK_PATH."tpl".DS.$template.".html");
         if($template!=false && is_array($vars)){
@@ -57,11 +117,21 @@ class HttpException extends \Exception
         }
     }
 
+    /**
+     * Generate error position description for tracing page
+     *
+     * @return string
+     */
     public function formErrorPos(){
         $traceSrc = is_null($this->origin)?$this:$this->origin;
         return fix_slashes_in_path($traceSrc->getFile())." (".$traceSrc->getLine().think_core_lang("tracing page line")."):";
     }
 
+    /**
+     * Generate error message description for tracing page
+     *
+     * @return string
+     */
     public function formErrorMsg(){
         $traceSrc = is_null($this->origin)?$this:$this->origin;
         $head = "";
@@ -75,6 +145,11 @@ class HttpException extends \Exception
         return $msg;
     }
 
+    /**
+     * Generate error tracing table for tracing page
+     *
+     * @return string
+     */
     public function formTracingTable(){
         $traceSrc = is_null($this->origin)?$this:$this->origin;
         $tableHtml = "";
@@ -96,6 +171,11 @@ class HttpException extends \Exception
         return $tableHtml;
     }
 
+    /**
+     * Generate request details table for tracing page
+     *
+     * @return string
+     */
     public function formRequestTable(){
         $tableHtml = "<tr><td class=\"debug-tracing-table-key\"></td><td class=\"debug-tracing-table-value\">".think_core_lang("tracing page null")."</td></tr>";
         $request = envar("request");
@@ -115,6 +195,11 @@ class HttpException extends \Exception
         return $tableHtml;
     }
 
+    /**
+     * Generate server info table for tracing page
+     *
+     * @return string
+     */
     public function formEnvTable(){
         $tableHtml = "";
         $tableHtml .= "<tr><td class=\"debug-tracing-table-key\">".think_core_lang("tracing page env system")."</td><td class=\"debug-tracing-table-value\">".php_uname()."</td></tr>";
