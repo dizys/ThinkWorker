@@ -92,7 +92,7 @@ class File
      * @return string
      */
     public function getType(){
-        return $this->filesize;
+        return $this->filetype;
     }
 
     /**
