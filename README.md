@@ -14,9 +14,9 @@ Run without Apache/Nginx/php-fpm! A PHP Framework based on `Workerman` to help b
 - yes, WE HAVE `Task Queue` BUILT INSIDE! File driver or Database driver is implemented so far. And they are all multi-process safe! Database driver supports distributed deployment.
 - Debug & Tracing: turn on debug mode, and you will have details and tracings for exceptions, request information and stuff...
 
-Now ThinkWorker is still in the progress moving forward to a very first stable version. Please try out, play around and maybe test out some bugs and report them :) 
+Now ThinkWorker is still in the progress moving forward to a very first stable version. Please try out, play around and maybe open an issue when running into problems :) 
 
-If you have any questions, do sumbit an issue on Github :) I'll reply soon.
+If you have any questions, don't hesitate sumbit an issue on Github :) I'll reply soon.
 
 ## Attention
 Workerman Engine is in the directory (`thinkworker\lib\workerman`), and the uploaded one is for Windows. If you wanna run this on Linux, you can replace the content of this directory with the linux version of Workerman.
