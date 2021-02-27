@@ -1,4 +1,4 @@
-# 基础教程 {docsify-ignore-all}
+# 基础文档
 
 ## 什么是ThinkWorker
 ThinkWorker是PHP下用于网站/API快速开发的高性能MVC框架。它完全脱离Apache、Nginx和php-fpm。
