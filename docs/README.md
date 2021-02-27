@@ -7,7 +7,7 @@ ThinkWorker是PHP下用于网站/API快速开发的高性能MVC框架。它完�
 
 相似于PHP和NodeJS等语言的主流框架（Laravel、ThinkPHP5、Express.Js等），只需要少量的学习就能获得性能明显的提升。
 
-## 教程内容
+## 文档大纲
 
 > 在学习框架之前您应该至少掌握PHP基本语法、命名空间和面向对象的相关知识。
 
