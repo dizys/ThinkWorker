@@ -31,7 +31,7 @@ class Index extends Controller
 如上例定义控制器时，同时定义了一个控制器方法叫`index`。
 控制器方法返回的数据会被发送给客户端，交给客户端浏览器渲染。
 
-!> 要使控制器方法能被访问，请务必为其加上`public`访问修饰符！
+> 要使控制器方法能被访问，请务必为其加上`public`访问修饰符！
 
 控制器方法可选按顺序接收两个参数：第一个为`Request`(请求)对象，即`think\Request`；第二个为`Response`(响应)对象，即`think\Response`。
 
@@ -148,7 +148,7 @@ class Index{
 
 当控制器继承`think\Controller`时，控制器方法在执行前会自动绑定相对应的视图模板。
 
-?> 自动对应关系为：控制器`User`下的方法`profile`对应的视图模板文件为`view/User/profile.html`，即`view/<控制器类名>/<方法名>.html`
+> 自动对应关系为：控制器`User`下的方法`profile`对应的视图模板文件为`view/User/profile.html`，即`view/<控制器类名>/<方法名>.html`
 
 ** 使用自动绑定的视图模板 **
 
