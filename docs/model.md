@@ -1,6 +1,6 @@
 # 模型
 
-!> 在开始之前，确保在 `config/database.php` 文件中配置好了数据库连接。数据库配置请查看[上章](./db.md)内容。
+> 在开始之前，确保在 `config/database.php` 文件中配置好了数据库连接。数据库配置请查看[上章](./db.md)内容。
 
 ThinkWorker 的`Model`(_模型_)基于`Laravel`的`Eloquent ORM`。
 
