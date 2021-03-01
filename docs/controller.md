@@ -89,7 +89,7 @@ class Index extends Controller
 
 在应用目录下，可以建立`domain`目录(如：`app/demo/domain`)，在其下放置用于处理某块业务逻辑的类。
 
-** 编写业务逻辑子层 **
+**编写业务逻辑子层**
 
 例如，我们在一个项目中需要将用户登陆后的购物车的业务功能抽象出来，称为`ShoppingCart`类。该类的代码文件应位于`app/demo/domain/ShoppingCart.php`
 
@@ -122,7 +122,7 @@ class ShoppingCart{
 }
 ```
 
-** 在控制器中使用业务逻辑子层 **
+**在控制器中使用业务逻辑子层**
 
 将直接操作 Model 的大量操作都封装在`Domain`层后，控制器就能很轻松地调用`Domain`层来控制业务。
 
@@ -150,7 +150,7 @@ class Index{
 
 > 自动对应关系为：控制器`User`下的方法`profile`对应的视图模板文件为`view/User/profile.html`，即`view/<控制器类名>/<方法名>.html`
 
-** 使用自动绑定的视图模板 **
+**使用自动绑定的视图模板**
 
 ```php
 <?php
