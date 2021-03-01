@@ -1,6 +1,6 @@
 # 数据库
 
-!> ThinkWorker 移植了了 Laravel 的数据库部分，您可以参考 Laravel 的使用！
+> ThinkWorker 移植了了 Laravel 的数据库部分，您可以参考 Laravel 的使用！
 
 在 ThinkWorker 中连接多种数据库以及对数据库进行查询非常简单，不论使用原生 SQL、还是查询构建器。_(当然还有下章所讲的`Model`)_
 
@@ -70,7 +70,7 @@ Db::update('update users set votes = 100 where name = ?',
 Db::delete('delete from users');
 ```
 
-!> 注意： `update` 和 `delete` 语法会返回在操作中所影响的数据笔数。
+> 注意： `update` 和 `delete` 语法会返回在操作中所影响的数据笔数。
 
 ## 使用查询构造器
 
@@ -313,7 +313,7 @@ Db::transaction(function()
 });
 ```
 
-!> 注意： 在 `transaction` 闭包若抛出任何异常会导致事务自动回滚。
+> 注意： 在 `transaction` 闭包若抛出任何异常会导致事务自动回滚。
 
 有时候你可能需要自己开始一个事务：
 
