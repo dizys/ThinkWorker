@@ -2,7 +2,7 @@
 
 > Note that this framework is no longer maintained. You can read its source codes for learning purposes or all the way you like of course, but using it in production is strongly discouraged.
 
-Run without Apache/Nginx/php-fpm! A PHP Framework based on `Workerman` to help build your website! mailto: derzart@gmail.com QQ:529189858
+Run without Apache/Nginx/php-fpm! A PHP Framework based on `Workerman` to help build your website!
 
 - Memory Resident and Multi-process: Load code once, and run stably and blazing fast on PHP socket connections with multiple processes. Based on `Workerman`.
 - Lazy autoload: Almose every class is autoloaded, and for sure, only once, then it stays in memory.
